@@ -46,7 +46,7 @@ const Main = () => {
   return (
     <>
       {result && (
-        <div className="flex gap-20 mt-6 p-6 bg-gray-800 rounded-lg shadow-md max-w-[90vw] ">
+        <div className="flex justify-between gap-20 mt-6 p-6 bg-gray-800 rounded-lg shadow-md !w-[90vw] ">
           <div>
             <h2 className="text-3xl font-bold mb-4 text-white">
               Analysis Result

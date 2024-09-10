@@ -39,20 +39,37 @@ const Chart = ({ indices }: { indices: Indices[] }) => {
           strokeWidth: 1,
         },
       }}
+      slotProps={{
+        legend: {
+          labelStyle: {
+            fill: "#fff",
+            fontFamily: "Poppins",
+          },
+        },
+      }}
       yAxis={[
         {
           id: "left",
-          data: yAxisData,
           scaleType: "linear",
           valueFormatter: (value) => formatLargeNumber(value),
         },
       ]}
       colors={["#00FF00"]}
       className=""
-      xAxis={[{ data: xAxisData }]}
+      xAxis={[
+        {
+          data: xAxisData,
+          label: "Size of Input",
+          labelStyle: {
+            fill: "#fff",
+            fontFamily: "Poppins",
+          },
+        },
+      ]}
       series={[
         {
           data: yAxisData,
+          label: "Number of Iterations",
         },
       ]}
       width={500}
