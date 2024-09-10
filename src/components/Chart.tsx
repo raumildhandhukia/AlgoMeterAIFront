@@ -1,6 +1,13 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import { Indices } from "../types";
 
+const formatLargeNumber = (value: number): string => {
+  if (value >= 10000) {
+    const exponent = Math.floor(Math.log10(value));
+    return `10^${exponent}`;
+  }
+  return value.toString();
+};
 const Chart = ({ indices }: { indices: Indices[] }) => {
   const xAxisData = indices.map((pair) => pair[0]);
   const yAxisData = indices.map((pair) => pair[1]);
@@ -32,6 +39,14 @@ const Chart = ({ indices }: { indices: Indices[] }) => {
           strokeWidth: 1,
         },
       }}
+      yAxis={[
+        {
+          id: "left",
+          data: yAxisData,
+          scaleType: "linear",
+          valueFormatter: (value) => formatLargeNumber(value),
+        },
+      ]}
       colors={["#00FF00"]}
       className=""
       xAxis={[{ data: xAxisData }]}

@@ -19,7 +19,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         width="90vw"
         theme={vscodeDark}
         extensions={[javascript({ jsx: true })]}
-        placeholder="Write your code here..."
+        placeholder="Paste your code here..."
         onChange={(value: string) => onChange && onChange(value)}
       />
     </div>

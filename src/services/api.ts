@@ -10,6 +10,9 @@ export const analyzeCode = async (code: string) => {
       body: JSON.stringify({ code_snippet: code }),
     });
     const data = await response.json();
+    if (response.status === 429) {
+      return { seconds_left: data.seconds_left };
+    }
     if (response.status !== 200) {
       throw new Error(data.error);
     }
