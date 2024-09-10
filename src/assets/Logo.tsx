@@ -7,13 +7,13 @@ export default function Logo({ className }: { className: string }) {
       width="73"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g fill="none" fill-rule="nonzero">
+      <g fill="none" fillRule="nonzero">
         <rect
           fill="#fff"
           height="71"
           rx="14"
           stroke="#2e2d2c"
-          stroke-width="2"
+          strokeWidth="2"
           width="71"
           x="1"
           y="1"

@@ -16,7 +16,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       <CodeMirror
         value={initialValue}
         height="60vh"
-        width="70vw"
+        width="90vw"
         theme={vscodeDark}
         extensions={[javascript({ jsx: true })]}
         placeholder="Write your code here..."
