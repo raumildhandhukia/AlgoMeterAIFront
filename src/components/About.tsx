@@ -14,14 +14,13 @@ const About: React.FC = () => {
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Support This Project</h2>
       <p className="mb-4">
-        AlgoMeter AI is a labor of love, created to benefit the developer
-        community. However, maintaining and improving this tool requires
-        resources. Hosting platforms and AI tools used to power AlgoMeter AI
-        are not cheap. If you find this project helpful, please consider
-        supporting it. Your contribution will help keep AlgoMeter AI running,
-        up-to-date, and free for everyone. Every little bit helps in our mission
-        to make algorithm analysis accessible to all developers. Thank you for
-        your support!
+        AlgoMeter AI is created to benefit the developer community. However,
+        maintaining and improving this tool requires resources. Hosting
+        platforms and AI tools used to power AlgoMeter AI are not cheap. If you
+        find this project helpful, please consider supporting it. Your
+        contribution will help keep AlgoMeter AI running, up-to-date, and free
+        for everyone. Every little bit helps in our mission to make algorithm
+        analysis accessible to all developers. Thank you for your support!
       </p>
       <BuyMeCoffee />
       <h2 className="text-2xl font-semibold mt-8 mb-4">The Developer</h2>

@@ -1,5 +1,6 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import { Indices } from "../types";
+import { useEffect, useState } from "react";
 
 const formatLargeNumber = (value: number): string => {
   if (value >= 10000) {
@@ -11,6 +12,32 @@ const formatLargeNumber = (value: number): string => {
 const Chart = ({ indices }: { indices: Indices[] }) => {
   const xAxisData = indices.map((pair) => pair[0]);
   const yAxisData = indices.map((pair) => pair[1]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const getChartWidth = () => {
+    if (isMobile) {
+      return 400;
+    }
+    return 500;
+  };
+
+  const getChartHeight = () => {
+    if (isMobile) {
+      return 400;
+    }
+    return 600;
+  };
+
   return (
     <LineChart
       sx={{
@@ -72,8 +99,8 @@ const Chart = ({ indices }: { indices: Indices[] }) => {
           label: "Number of Iterations",
         },
       ]}
-      width={500}
-      height={600}
+      width={getChartWidth()}
+      height={getChartHeight()}
     />
   );
 };

@@ -44,64 +44,24 @@ const Main = () => {
 
   return (
     <>
-      {result && (
-        <div className="flex justify-between gap-20 mt-6 p-6 bg-gray-800 rounded-lg shadow-md !w-[90vw] ">
-          <div>
-            <h2 className="text-3xl font-bold mb-4 text-white">
-              Analysis Result
-            </h2>
-            <div className="space-y-20">
-              <div>
-                <p className="font-semibold text-gray-300 mt-10 mb-2 text-2xl">
-                  Explanation:
-                </p>
-                <p className="text-gray-300 bg-gray-700 p-3 mt-5 rounded-lg text-xl">
-                  {result.explanation}
-                </p>
-              </div>
-              <div className="flex gap-8 flex-col">
-                <p className="flex items-center gap-3">
-                  <span className="font-semibold text-gray-300 text-4xl">
-                    Time Complexity:
-                  </span>
-                  <span className="bg-blue-600 text-white px-2 py-1 rounded text-5xl">
-                    {result.time_complexity}
-                  </span>
-                </p>
-                <p className="flex items-center gap-3">
-                  <span className="font-semibold text-gray-300 text-4xl">
-                    Space Complexity:
-                  </span>
-                  <span className="bg-green-600 text-white px-2 py-1 rounded text-5xl">
-                    {result.space_complexity}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="min-w-[500px] min-h-[500px]">
-            {indices && indices.length > 0 ? (
-              <div className="flex flex-col justify-center items-center mt-10">
-                <Chart indices={indices} />
-                <div className="px-10">
-                  <p className="text-gradient text-2xl ">
-                    hover your mouse over the chart
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex justify-center items-start mt-10 h-full">
-                <p className="text-gray-300 text-xl">
-                  Something went wrong. Please try again.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+      <div className="flex flex-col justify-center items-center mt-10 px-4 lg:px-40">
+        <p className="text-gray-300 text-xl lg:text-4xl space-y-2">
+          <p>
+            <span className="font-bold text-gradient">AI will estimate </span>
+            the time and space complexity of your code.{" "}
+          </p>
+          <p>
+            <span className="font-bold text-gradient">Measure</span> the
+            performance of your code with AlgoMeter AI.
+          </p>
+          <p>
+            <span className="font-bold text-gradient">Visualize</span> the
+            iterations for different sizes of input in form of a chart.
+          </p>
+        </p>
+      </div>
       <div className="flex flex-col justify-center items-center mt-10">
-        <div className="flex justify-evenly gap-4 mb-8">
+        <div className="flex justify-evenly gap-4 mb-8 flex-wrap">
           <button
             className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
             onClick={() => setExampleCode("linear_search")}
@@ -149,6 +109,61 @@ const Main = () => {
         </PulsatingButton>
       )}
       {error && <p className="mt-4 text-red-500">{error}</p>}
+      {result && (
+        <div className="flex flex-col lg:flex-row justify-between gap-20 mt-12 p-6 bg-gray-800 rounded-lg shadow-md !w-[90vw] ">
+          <div>
+            <h2 className="text-3xl font-bold mb-4 text-white">
+              Analysis Result
+            </h2>
+            <div className="space-y-20 ">
+              <div className="flex flex-col ">
+                <p className="font-semibold text-gray-300 mt-10 mb-2 text-2xl">
+                  Explanation:
+                </p>
+                <p className="text-gray-300 bg-gray-700 p-3 mt-5 rounded-lg text-xl">
+                  {result.explanation}
+                </p>
+              </div>
+              <div className="flex gap-8 flex-col">
+                <p className="flex flex-col lg:flex-row gap-2">
+                  <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
+                    Time Complexity:
+                  </span>
+                  <span className="bg-blue-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
+                    {result.time_complexity}
+                  </span>
+                </p>
+                <p className="flex flex-col lg:flex-row gap-2">
+                  <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
+                    Space Complexity:
+                  </span>
+                  <span className="bg-green-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
+                    {result.space_complexity}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="lg:min-w-[500px] lg:min-h-[500px]">
+            {indices && indices.length > 0 ? (
+              <div className="flex flex-col justify-center items-center mt-10">
+                <Chart indices={indices} />
+                <div className="px-10">
+                  <p className="text-gradient text-2xl ">
+                    hover your mouse over the chart
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center items-start mt-10 h-full">
+                <p className="text-gray-300 text-xl">
+                  Something went wrong. Please try again.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };
