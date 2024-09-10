@@ -3,12 +3,12 @@ import { SiGmail } from "react-icons/si";
 const socialMedia = [
   {
     id: 1,
-    img: "/public/git.svg",
+    img: "./git.svg",
     link: "https://github.com/raumildhandhukia",
   },
   {
     id: 3,
-    img: "/public/link.svg",
+    img: "./link.svg",
     link: "https://www.linkedin.com/in/raumild/",
   },
 ];

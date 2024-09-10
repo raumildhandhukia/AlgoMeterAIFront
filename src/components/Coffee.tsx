@@ -7,7 +7,7 @@ export const BuyMeCoffee = () => {
         <h3 className="ThemeText !text-left text-xl">Buy Me A Coffee</h3>
         <div className="flex flex-col items-start h-full ">
           <img
-            src="/public/bmc_qr.png"
+            src="./bmc_qr.png"
             width={150}
             height={150}
             alt="buy_me_coffee_qr"
