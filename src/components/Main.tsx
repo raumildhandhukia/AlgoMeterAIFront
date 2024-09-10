@@ -41,7 +41,6 @@ const Main = () => {
   const setExampleCode = (exampleName: string) => {
     setCode(examples[exampleName]);
   };
-  console.log(code);
 
   return (
     <>
