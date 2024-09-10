@@ -1,50 +1,69 @@
-# React + TypeScript + Vite
+# AlgoMeter AI Frontend Repo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AlgoMeter AI is a web application designed to help developers analyze and visualize the time and space complexity of their algorithms. This tool uses AI to provide insights into code performance and offers a visual representation of algorithm efficiency.
 
-Currently, two official plugins are available:
+This repository contains the frontend code for AlgoMeter AI. For the backend code, please visit [AlgoMeter AI Backend Repo](https://github.com/raumildhandhukia/AlgoMeterAIBack).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Code analysis for time and space complexity
+- Visual representation of algorithm performance
+- Support for various programming languages
+- Interactive code editor
+- Responsive design for mobile and desktop
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Technologies Used
 
-- Configure the top-level `parserOptions` property like this:
+### Frontend (This Repo)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- React with TypeScript
+- Tailwind CSS for styling
+- Vite as the build tool
+- MUI Charts for data visualization
+- CodeMirror for the code editor
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Backend (Separate Repo)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- Python
+- FastAPI
+- Gemini API for AI-powered analysis
+- Redis for rate limiting
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Getting Started
+
+To run this project locally:
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Create a `.env` file in the root directory and add your environment variables:
+   ```
+   VITE_SERVER_URL=your_backend_url
+   ```
+4. Start the development server:
+   ```
+   npm run dev
+   ```
+
+## Usage
+
+1. Visit the homepage
+2. Enter your code in the provided editor
+3. Click the "Analyze" button
+4. View the analysis results and performance chart
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+If you find this project helpful, consider supporting it:
+
+[Buy Me A Coffee](https://buymeacoffee.com/raumildhandhukia)
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
