@@ -18,7 +18,7 @@ export default function Footer() {
         </p>
       </div>
       <div className="flex justify-center items-center">
-        <p>&copy; 2024 Big O Insights</p>
+        <p>&copy; 2024 AlgoMeter AI</p>
       </div>
     </footer>
   );

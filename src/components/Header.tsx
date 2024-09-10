@@ -7,7 +7,7 @@ export default function Header() {
       <nav className="container mx-auto py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <Logo className="w-10 h-10" />
-          <h1 className="text-2xl text-white">Big O Insights</h1>
+          <h1 className="text-2xl text-white">AlgoMeter AI</h1>
         </Link>
         <ul>
           <li>

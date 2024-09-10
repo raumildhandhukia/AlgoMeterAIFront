@@ -4,9 +4,9 @@ import { BuyMeCoffee } from "./Coffee";
 const About: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-6">About Big O Insights</h1>
+      <h1 className="text-4xl font-bold mb-6">About AlgoMeter AI</h1>
       <p className="mb-4">
-        Big O Insights is a website designed to help developers understand and
+        AlgoMeter AI is a website designed to help developers understand and
         visualize the time and space complexity of their algorithms. This tool
         analyzes code snippets and provides detailed insights into their
         performance characteristics.
@@ -14,11 +14,11 @@ const About: React.FC = () => {
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Support This Project</h2>
       <p className="mb-4">
-        Big O Insights is a labor of love, created to benefit the developer
+        AlgoMeter AI is a labor of love, created to benefit the developer
         community. However, maintaining and improving this tool requires
-        resources. Hosting platforms and AI tools used to power Big O Insights
+        resources. Hosting platforms and AI tools used to power AlgoMeter AI
         are not cheap. If you find this project helpful, please consider
-        supporting it. Your contribution will help keep Big O Insights running,
+        supporting it. Your contribution will help keep AlgoMeter AI running,
         up-to-date, and free for everyone. Every little bit helps in our mission
         to make algorithm analysis accessible to all developers. Thank you for
         your support!
@@ -32,12 +32,12 @@ const About: React.FC = () => {
             Raumil Dhandhukia
           </a>
         </span>
-        , the creator of Big O Insights. As a passionate software engineer, I've
+        , the creator of AlgoMeter AI. As a passionate software engineer, I've
         always been fascinated by algorithm analysis and its impact on code
         performance. I built this tool to make algorithm complexity more
         accessible and intuitive for developers at all levels. Whether you're a
         student learning about Big O notation or a seasoned programmer
-        optimizing your code, I hope Big O Insights helps you on your journey.
+        optimizing your code, I hope AlgoMeter AI helps you on your journey.
         Let's demystify algorithms together!
       </p>
 
