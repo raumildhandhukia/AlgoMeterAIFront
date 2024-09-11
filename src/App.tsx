@@ -3,6 +3,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Main from "./components/Main";
 import About from "./components/About";
+import FAQ from "./components/FAQ";
+import Blog from "./components/Blog";
+import BlogPost from "./components/BlogPost";
 
 export default function App() {
   return (
@@ -13,6 +16,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/about" element={<About />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
           </Routes>
         </main>
         <Footer />

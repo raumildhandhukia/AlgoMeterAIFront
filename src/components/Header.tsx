@@ -9,7 +9,17 @@ export default function Header() {
           <Logo className="w-8 h-8 lg:w-10 lg:h-10" />
           <h1 className="text-md lg:text-2xl text-white">AlgoMeter AI</h1>
         </Link>
-        <ul>
+        <ul className="flex items-center gap-4">
+          <li>
+            <Link to="/blog" className="hover:text-gray-300">
+              Blog
+            </Link>
+          </li>
+          <li>
+            <Link to="/faq" className="hover:text-gray-300">
+              FAQ
+            </Link>
+          </li>
           <li>
             <Link
               to="/about"
