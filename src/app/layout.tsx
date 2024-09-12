@@ -12,9 +12,8 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "AlgoMeter AI",
   description:
-    "Analyze your algorithms using AI. Get the time and space complexity. Visualize the iterations.",
-  keywords:
-    "algorithm, algorithm analysis, big O notation, time complexity, space complexity, code optimization, AI, AlgoMeter AI, time complexity, space complexity, algorithm visualization, time and space complexity, algometer, algometer ai",
+    "Calculate the time and space complexity of your code using Big O notation. ",
+
   authors: [{ name: "Raumil Dhandhukia" }],
   openGraph: {
     title: "AlgoMeter AI",
@@ -51,6 +50,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="keywords" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/svg+xml" href="/big-o-notation.svg" />
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
