@@ -25,6 +25,8 @@ const examples: Examples = {
 
   linear_search:
     "function linear_search(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] === target) {\n      return i;\n    }\n  }\n  return -1;\n}",
+  dp_fibonacci:
+    "def fibonacci_memo(n, memo={}): \n if n in memo:         \n    return memo[n]      \n if n <= 1:            \n    return n      \n memo[n] = fibonacci_memo(n - 1, memo) + fibonacci_memo(n - 2, memo)     \n return memo[n]",
 };
 
 const Main = () => {
@@ -76,7 +78,13 @@ const Main = () => {
             className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
             onClick={() => setExampleCode("recursive_fibonacci")}
           >
-            Recursive Fibonacci
+            Fibonacci - Recursive
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+            onClick={() => setExampleCode("dp_fibonacci")}
+          >
+            Fibonacci - Memoization
           </button>
         </div>
         <CodeEditor initialValue={code} onChange={handleCodeChange} />
