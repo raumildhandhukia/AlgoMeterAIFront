@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import CodeEditor from "./CodeEditor";
 import PulsatingButton from "./ui/pulsating-button";
@@ -44,22 +46,6 @@ const Main = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center mt-10 px-4 lg:px-40">
-        <p className="text-gray-300 text-xl lg:text-4xl space-y-2">
-          <p>
-            <span className="font-bold text-gradient">AI will estimate </span>
-            the time and space complexity of your code.{" "}
-          </p>
-          <p>
-            <span className="font-bold text-gradient">Measure</span> the
-            performance of your code with AlgoMeter AI.
-          </p>
-          <p>
-            <span className="font-bold text-gradient">Visualize</span> the
-            iterations for different sizes of input in form of a chart.
-          </p>
-        </p>
-      </div>
       <div className="flex flex-col justify-center items-center mt-10">
         <div className="flex justify-evenly gap-4 mb-8 flex-wrap">
           <button

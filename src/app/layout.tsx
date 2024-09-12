@@ -51,11 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="icon"
-          type="image/svg+xml"
-          href="/assets/big-o-notation.svg"
-        />
+        <link rel="icon" type="image/svg+xml" href="/big-o-notation.svg" />
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
           rel="stylesheet"

@@ -1,7 +1,8 @@
-const BASE = import.meta.env.VITE_SERVER_URL;
+const BASE = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const analyzeCode = async (code: string) => {
   try {
+    debugger;
     const response = await fetch(`${BASE}/api/analyze`, {
       method: "POST",
       headers: {

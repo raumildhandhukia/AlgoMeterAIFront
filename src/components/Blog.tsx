@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const blogPosts = [
   {
@@ -86,7 +86,7 @@ export default function Blog() {
         {blogPosts.map((post, index) => (
           <li key={index}>
             <Link
-              to={`/blog/${post.slug}`}
+              href={`/blog/${post.slug}`}
               className="block hover:bg-gray-700 p-4 rounded"
             >
               <h2 className="text-xl font-semibold">{post.title}</h2>

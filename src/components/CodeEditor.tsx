@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { useState, useEffect } from "react";
+
 interface CodeEditorProps {
   initialValue?: string;
   onChange?: (value: string) => void;
@@ -12,12 +12,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   initialValue = "",
   onChange,
 }) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
+    handleResize(); // Set initial value
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -25,18 +28,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, []);
 
   const getHeight = () => {
-    if (isMobile) {
-      return "60vh";
-    }
-    return "60vh";
+    return isMobile ? "60vh" : "60vh";
   };
 
   const getWidth = () => {
-    if (isMobile) {
-      return "90vw";
-    }
-    return "90vw";
+    return isMobile ? "90vw" : "90vw";
   };
+
+  if (!mounted) {
+    return null; // or a loading placeholder
+  }
 
   return (
     <div className="code-editor-container">
