@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import Link from "next/link";
 
 const blogContents: Record<
   string,
@@ -1322,8 +1322,8 @@ print(get_element(my_array, 2))  # Output: 3`}
   // ... Add similar detailed content for other blog posts
 };
 
-export default function BlogPost() {
-  const { slug } = useParams<{ slug: string }>();
+export default function BlogPost({ slug }: { slug: string }) {
+  // const { slug } = useParams<{ slug: string }>();
   const post = slug ? blogContents[slug as keyof typeof blogContents] : null;
 
   if (!post) {
@@ -1332,7 +1332,7 @@ export default function BlogPost() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <Link to="/blog" className="text-blue-500 hover:underline mb-4 block">
+      <Link href="/blog" className="text-blue-500 hover:underline mb-4 block">
         &larr; Back to Blog
       </Link>
       <h1 className="text-4xl font-bold mb-2">{post.title}</h1>

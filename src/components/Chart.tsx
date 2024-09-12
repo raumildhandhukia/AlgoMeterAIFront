@@ -1,3 +1,4 @@
+"use client";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { Indices } from "../types";
 import { useEffect, useState } from "react";
