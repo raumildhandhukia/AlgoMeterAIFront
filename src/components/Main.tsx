@@ -5,6 +5,7 @@ import CodeEditor from "./CodeEditor";
 import PulsatingButton from "./ui/pulsating-button";
 import { useCodeAnalysis } from "../hooks/useCodeAnalysis";
 import Chart from "./Chart";
+// import ExtensionBanner from "./ExtensionBanner";
 
 type Examples = {
   [key: string]: string;
@@ -48,6 +49,7 @@ const Main = () => {
 
   return (
     <>
+      
       <div className="flex flex-col justify-center items-center mt-10">
         <div className="flex justify-evenly gap-4 mb-8 flex-wrap">
           <button

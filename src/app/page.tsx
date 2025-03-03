@@ -1,9 +1,12 @@
+import ExtensionBanner from "@/components/ExtensionBanner";
 import Main from "@/components/Main";
 
 export default function Page() {
   return (
     <>
+    <ExtensionBanner />
       <div className="flex flex-col justify-center items-center mt-10 px-4 lg:px-40">
+      
         <div className="text-gray-300 text-xl lg:text-4xl space-y-2">
           <p>
             <span className="font-bold text-gradient">Estimate </span>
