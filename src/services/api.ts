@@ -26,12 +26,33 @@ export const analyzeCode = async (code: string) => {
   }
 };
 
-export const fetchCompanyQuestions = async (slug: string, page: number = 1, limit: number = 100) => {
+export const fetchCompanyQuestions = async (
+  slug: string, 
+  page: number = 1, 
+  limit: number = 100, 
+  options: {
+    match?: 'all' | 'any', 
+    minFrequency?: number, 
+    difficulty?: 'easy' | 'medium' | 'hard', 
+    topics?: string[]
+  } = {}
+) => {
   try {
-    const response = await fetch(`${QUESTIONS}/api/company-questions?slug=${slug}&page=${page}&limit=${limit}`, {
+    const queryParams = new URLSearchParams({
+      slug,
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    // Add optional parameters
+    if (options.match) queryParams.append('match', options.match);
+    if (options.minFrequency !== undefined) queryParams.append('minFrequency', options.minFrequency.toString());
+    if (options.difficulty) queryParams.append('difficulty', options.difficulty);
+    if (options.topics && options.topics.length > 0) queryParams.append('topics', options.topics.join(','));
+
+    const response = await fetch(`${QUESTIONS}/api/company-questions?${queryParams.toString()}`, {
       // credentials: 'include', // Add credentials to send cookies
     });
-    
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to fetch company questions');
@@ -40,7 +61,6 @@ export const fetchCompanyQuestions = async (slug: string, page: number = 1, limi
     const data = await response.json();
     return data;
   } catch (error) {
-
     throw error;
   }
 };

@@ -1,0 +1,139 @@
+.company-questions-filter {
+  background-color: #1f2937;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  min-height: 300px; /* Set a minimum height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.filter-section {
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.company-questions-filter .filter-section h3 {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.topic-button {
+  background-color: #374151;
+  color: #d1d5db;
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.topic-button:hover {
+  background-color: #4b5563;
+}
+
+.topic-button.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.match-type-buttons, .difficulty-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.match-type-buttons button, .difficulty-buttons button {
+  background-color: #374151;
+  color: #d1d5db;
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.match-type-buttons button:hover, 
+.difficulty-buttons button:hover {
+  background-color: #4b5563;
+}
+
+.match-type-buttons button.selected, 
+.difficulty-buttons button.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.frequency-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.frequency-input input[type="range"] {
+  flex-grow: 1;
+  accent-color: #3b82f6;
+}
+
+.frequency-input span {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.apply-filters, .reset-filters {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.apply-filters {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.apply-filters:hover {
+  background-color: #2563eb;
+}
+
+.reset-filters {
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+.reset-filters:hover {
+  background-color: #4b5563;
+}
+
+.no-questions-found-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+}
+
+.no-questions-found-message {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.no-questions-found-message p {
+  color: #6b7280;
+  font-size: 1rem;
+}

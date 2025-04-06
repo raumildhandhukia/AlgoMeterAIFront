@@ -9,6 +9,7 @@ import Fuse from "fuse.js";
 import type { FuseResult } from "fuse.js";
 import { Search, ChevronDown, ChevronUp, X } from "lucide-react";
 import SkeletonLoader from "@/components/ui/SkeletonLoader";
+import CompanyQuestionsFilter from "@/components/CompanyQuestionsFilter";
 
 // Define types for company data
 interface Company {
@@ -67,6 +68,12 @@ const CompanySearch = () => {
   const [companyTagsData, setCompanyTagsData] = useState<Record<string, CompanyTagsResponse>>({});
   const [loadingCompanyTags, setLoadingCompanyTags] = useState<Record<string, boolean>>({});
   const [showDetailedTags, setShowDetailedTags] = useState<Record<string, boolean>>({});
+  const [currentFilters, setCurrentFilters] = useState<{
+    match?: 'all' | 'any', 
+    minFrequency?: number, 
+    difficulty?: 'easy' | 'medium' | 'hard', 
+    topics?: string[]
+  }>({});
 
   // Setup fuzzy search with Fuse.js
   const fuse = new Fuse(companyData.companyTags, {
@@ -85,19 +92,29 @@ const CompanySearch = () => {
     setSearchTerm(company.name);
     setShowResults(false);
     setCurrentPage(1);
+    setCurrentFilters({});
     fetchQuestions(company.slug, 1);
   };
 
-  const fetchQuestions = async (slug: string, page: number) => {
+  const fetchQuestions = async (
+    slug: string, 
+    page: number, 
+    filters: {
+      match?: 'all' | 'any', 
+      minFrequency?: number, 
+      difficulty?: 'easy' | 'medium' | 'hard', 
+      topics?: string[]
+    } = {}
+  ) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetchCompanyQuestions(slug, page);
+      const response = await fetchCompanyQuestions(slug, page, 100, filters);
       setQuestions(response.questions);
       setPagination(response.pagination);
     } catch (err) {
       setError("Failed to fetch questions. Please try again.");
-
+      setQuestions([]);
     } finally {
       setIsLoading(false);
     }
@@ -106,8 +123,71 @@ const CompanySearch = () => {
   const handlePageChange = (page: number) => {
     if (!selectedCompany) return;
     setCurrentPage(page);
-    fetchQuestions(selectedCompany.slug, page);
+    fetchQuestions(selectedCompany.slug, page, currentFilters);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleFilterChange = (filters: {
+    match?: 'all' | 'any', 
+    minFrequency?: number, 
+    difficulty?: 'easy' | 'medium' | 'hard' | 'all', 
+    topics?: string[],
+    resetPage?: boolean
+  }) => {
+    // Always reset the current page to 1 when filters change
+    if (filters.resetPage) {
+      setCurrentPage(1);
+    }
+    
+    setCurrentFilters(prevFilters => {
+      // Merge new filters with existing filters
+      const mergedFilters = { ...prevFilters, ...filters };
+      
+      // Remove 'all' from difficulty as it means no filter
+      if (mergedFilters.difficulty === 'all') {
+        delete mergedFilters.difficulty;
+      }
+      
+      // Remove the resetPage flag as it's not needed for API calls
+      if (mergedFilters.resetPage) {
+        delete mergedFilters.resetPage;
+      }
+      
+      // Make sure frequency changes are always applied
+      // This ensures frequency changes are detected even when changing from 0 to another value
+      
+      // If no filters are set, reset to empty object
+      const cleanedFilters = Object.keys(mergedFilters).length === 0 
+        ? {} 
+        : Object.fromEntries(
+            Object.entries(mergedFilters).filter(([_, v]) => 
+              v !== undefined && v !== null
+            )
+          );
+
+      if (selectedCompany) {
+        // Always use page 1 when filters change
+        fetchQuestions(selectedCompany.slug, 1, cleanedFilters);
+      }
+
+      return cleanedFilters;
+    });
+  };
+
+  const renderNoQuestionsFound = () => {
+    const hasFilters = Object.keys(currentFilters).length > 0;
+    
+    return (
+      <div className="w-full flex flex-col items-center">
+        <div className="w-full text-center py-8">
+          <p className="text-gray-400 text-xl">
+            {hasFilters 
+              ? `No questions found for ${selectedCompany?.name} with applied filters` 
+              : `No questions found for ${selectedCompany?.name}`}
+          </p>
+        </div>
+      </div>
+    );
   };
 
   // Close search results when clicking outside
@@ -271,6 +351,16 @@ const CompanySearch = () => {
       {error && (
         <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-center my-8">
           <p>{error}</p>
+        </div>
+      )}
+
+      {/* Filter - Always show when a company is selected */}
+      {selectedCompany && (
+        <div className="mb-6">
+          <CompanyQuestionsFilter 
+            initialFilters={currentFilters} 
+            onFilterChange={handleFilterChange} 
+          />
         </div>
       )}
 
@@ -519,13 +609,7 @@ const CompanySearch = () => {
       )}
 
       {/* No Questions State */}
-      {!isLoading && selectedCompany && questions.length === 0 && !error && (
-        <div className="text-center py-20">
-          <p className="text-gray-400 text-xl">
-            No questions found for {selectedCompany.name}
-          </p>
-        </div>
-      )}
+      {!isLoading && selectedCompany && questions.length === 0 && !error && renderNoQuestionsFound()}
 
       {/* Initial State */}
       {!isLoading && !selectedCompany && !error && (
