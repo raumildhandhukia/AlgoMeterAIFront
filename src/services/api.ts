@@ -29,10 +29,7 @@ export const analyzeCode = async (code: string) => {
 export const fetchCompanyQuestions = async (slug: string, page: number = 1, limit: number = 100) => {
   try {
     const response = await fetch(`${QUESTIONS}/api/company-questions?slug=${slug}&page=${page}&limit=${limit}`, {
-      credentials: 'include', // Add credentials to send cookies
-      headers: {
-        "Content-Type": "application/json"
-      }
+
     });
     
     if (!response.ok) {
