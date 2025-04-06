@@ -11,6 +11,16 @@ export default function Header() {
         </Link>
         <ul className="flex items-center gap-4">
           <li>
+            <Link href="/" className="hover:text-gray-300">
+              Company Wise Questions
+            </Link>
+          </li>
+          <li>
+            <Link href="/analysis" className="hover:text-gray-300">
+              Analysis Tool
+            </Link>
+          </li>
+          <li>
             <Link href="/blog" className="hover:text-gray-300">
               Blog
             </Link>

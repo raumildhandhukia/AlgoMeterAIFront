@@ -1,29 +1,17 @@
-import ExtensionBanner from "@/components/ExtensionBanner";
-import Main from "@/components/Main";
+import CompanySearch from "@/components/CompanySearch";
 
 export default function Page() {
   return (
-    <>
-    <ExtensionBanner />
-      <div className="flex flex-col justify-center items-center mt-10 px-4 lg:px-40">
-      
-        <div className="text-gray-300 text-xl lg:text-4xl space-y-2">
-          <p>
-            <span className="font-bold text-gradient">Estimate </span>
-            the time and space complexity of your code using AI.
-          </p>
-
-          <p>
-            <span className="font-bold text-gradient">Visualize</span> the
-            iterations for different sizes of input in form of a chart.
-          </p>
-          <p>
-            <span className="font-bold text-gradient">Measure</span> the
-            performance of your code with AlgoMeter AI.
-          </p>
-        </div>
+    <div className="w-full max-w-7xl px-4 py-8">
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl lg:text-5xl font-bold mb-4">
+          <span className="text-gradient">Company-wise</span> LeetCode Questions
+        </h1>
+        <p className="text-gray-300 text-lg lg:text-xl">
+          Search for interview questions asked by top tech companies
+        </p>
       </div>
-      <Main />
-    </>
+      <CompanySearch />
+    </div>
   );
 }

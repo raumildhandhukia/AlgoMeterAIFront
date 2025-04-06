@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import ExtensionBanner from "@/components/ExtensionBanner";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -61,6 +62,7 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <main className="min-h-screen bg-gray-900 text-white flex flex-col">
           <Header />
+          <ExtensionBanner />
           <div className="flex-grow flex flex-col items-center justify-center">
             {children}
           </div>

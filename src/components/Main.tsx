@@ -89,77 +89,79 @@ const Main = () => {
             Fibonacci - Memoization
           </button>
         </div>
-        <CodeEditor initialValue={code} onChange={handleCodeChange} />
-      </div>
-      {secondsLeft && secondsLeft > 0 ? (
-        <div className="mt-16 text-2xl text-white">
-          Limit reached. Try again after {secondsLeft} seconds.
-        </div>
-      ) : (
-        <PulsatingButton
-          onClick={handleAnalyze}
-          className="text-2xl mt-16 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          disabled={isLoading}
-        >
-          {isLoading ? "Analyzing..." : "Click to start analysis"}
-        </PulsatingButton>
-      )}
-      {error && <p className="mt-4 text-red-500">{error}</p>}
-      {result && (
-        <div className="flex flex-col lg:flex-row justify-between gap-20 mt-12 p-6 bg-gray-800 rounded-lg shadow-md !w-[90vw] ">
-          <div>
-            <h2 className="text-3xl font-bold mb-4 text-white">
-              Analysis Result
-            </h2>
-            <div className="space-y-20 ">
-              <div className="flex flex-col ">
-                <p className="font-semibold text-gray-300 mt-10 mb-2 text-2xl">
-                  Explanation:
-                </p>
-                <p className="text-gray-300 bg-gray-700 p-3 mt-5 rounded-lg text-xl">
-                  {result.explanation}
-                </p>
-              </div>
-              <div className="flex gap-8 flex-col">
-                <p className="flex flex-col lg:flex-row gap-2">
-                  <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
-                    Time Complexity:
-                  </span>
-                  <span className="bg-blue-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
-                    {result.time_complexity}
-                  </span>
-                </p>
-                <p className="flex flex-col lg:flex-row gap-2">
-                  <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
-                    Space Complexity:
-                  </span>
-                  <span className="bg-green-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
-                    {result.space_complexity}
-                  </span>
-                </p>
-              </div>
+        <div className="flex flex-col items-center gap-8">
+          <CodeEditor initialValue={code} onChange={handleCodeChange} />
+          {secondsLeft && secondsLeft > 0 ? (
+            <div className="mt-16 text-2xl text-white">
+              Limit reached. Try again after {secondsLeft} seconds.
             </div>
-          </div>
-          <div className="lg:min-w-[500px] lg:min-h-[500px]">
-            {indices && indices.length > 0 ? (
-              <div className="flex flex-col justify-center items-center mt-10">
-                <Chart indices={indices} />
-                <div className="px-10">
-                  <p className="text-gradient text-2xl ">
-                    hover your mouse over the chart
-                  </p>
+          ) : (
+            <PulsatingButton
+              onClick={handleAnalyze}
+              className="text-2xl px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              disabled={isLoading}
+            >
+              {isLoading ? "Analyzing..." : "Click to start analysis"}
+            </PulsatingButton>
+          )}
+          {error && <p className="text-red-500">{error}</p>}
+          {result && (
+            <div className="flex flex-col lg:flex-row justify-between gap-20 mt-12 p-6 bg-gray-800 rounded-lg shadow-md !w-[90vw]">
+              <div>
+                <h2 className="text-3xl font-bold mb-4 text-white">
+                  Analysis Result
+                </h2>
+                <div className="space-y-20 ">
+                  <div className="flex flex-col ">
+                    <p className="font-semibold text-gray-300 mt-10 mb-2 text-2xl">
+                      Explanation:
+                    </p>
+                    <p className="text-gray-300 bg-gray-700 p-3 mt-5 rounded-lg text-xl">
+                      {result.explanation}
+                    </p>
+                  </div>
+                  <div className="flex gap-8 flex-col">
+                    <p className="flex flex-col lg:flex-row gap-2">
+                      <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
+                        Time Complexity:
+                      </span>
+                      <span className="bg-blue-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
+                        {result.time_complexity}
+                      </span>
+                    </p>
+                    <p className="flex flex-col lg:flex-row gap-2">
+                      <span className="font-semibold text-gray-300 text-2xl lg:text-4xl">
+                        Space Complexity:
+                      </span>
+                      <span className="bg-green-600 text-white px-2 rounded-2xl text-3xl lg:text-5xl w-max py-4 lg:-mt-4">
+                        {result.space_complexity}
+                      </span>
+                    </p>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="flex justify-center items-start mt-10 h-full">
-                <p className="text-gray-300 text-xl">
-                  Something went wrong. Please try again.
-                </p>
+              <div className="lg:min-w-[500px] lg:min-h-[500px]">
+                {indices && indices.length > 0 ? (
+                  <div className="flex flex-col justify-center items-center mt-10">
+                    <Chart indices={indices} />
+                    <div className="px-10">
+                      <p className="text-gradient text-2xl ">
+                        hover your mouse over the chart
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-start mt-10 h-full">
+                    <p className="text-gray-300 text-xl">
+                      Something went wrong. Please try again.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 };
