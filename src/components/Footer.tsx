@@ -9,12 +9,9 @@ export default function Footer() {
       <div className="flex justify-center items-center text-sm lg:text-lg">
         <p>
           made with ❤️ by{" "}
-          <a
-            href="https://www.linkedin.com/in/raumild/"
-            className="hover:underline text-red-400 font-bold tracking-widest"
-          >
+          <span className="text-red-400 font-bold tracking-widest">
             @raumildhandhukia
-          </a>
+          </span>
         </p>
       </div>
       <div className="flex justify-center items-center text-sm lg:text-lg">
