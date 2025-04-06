@@ -47,7 +47,7 @@ export const useCodeAnalysis = () => {
         setIndices(indices);
       }
     } catch (err) {
-      console.log(err);
+
       setError("Error analyzing code");
     } finally {
       setIsLoading(false);

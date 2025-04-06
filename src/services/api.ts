@@ -21,7 +21,7 @@ export const analyzeCode = async (code: string) => {
     }
     return data;
   } catch (error) {
-    console.error("Error analyzing code:", error);
+
     throw error;
   }
 };
@@ -40,7 +40,7 @@ export const fetchCompanyQuestions = async (slug: string, page: number = 1, limi
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching company questions:", error);
+
     throw error;
   }
 };

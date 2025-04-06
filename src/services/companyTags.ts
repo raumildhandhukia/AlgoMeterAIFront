@@ -21,11 +21,11 @@ interface CompanyTagsApiResponse {
 
 export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> => {
   try {
-    console.log(`API call to: ${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
+
     
     // Make the API request
     const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
-    console.log('API response status:', response.status);
+
     
     if (!response.ok) {
       throw new Error(`Failed to fetch company tags: ${response.status}`);
@@ -33,7 +33,7 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
     
     // Parse the response
     const data = await response.json();
-    console.log('Raw API response data:', data);
+
     
     // Create a default response structure
     const defaultResponse: CompanyTagsResponse = {
@@ -44,7 +44,7 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
     
     // Check if we have a successful response
     if (!data.success) {
-      console.error(`API returned error: ${data.statusCode}`);
+
       return defaultResponse;
     }
     
@@ -53,7 +53,7 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
       try {
         // Parse the JSON string
         const parsedData = JSON.parse(data.companyTags);
-        console.log('Successfully parsed company tags data:', parsedData);
+
         
         // Create a properly structured response
         return {
@@ -62,12 +62,12 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
           more_than_six_months: parsedData?.more_than_six_months || []
         };
       } catch (parseError) {
-        console.error('Failed to parse company tags JSON:', parseError);
+
         return defaultResponse;
       }
     } else if (data.companyTags && typeof data.companyTags === 'object') {
       // If companyTags is already an object
-      console.log('Company tags is already an object:', data.companyTags);
+
       const tagsData = data.companyTags as any;
       
       return {
@@ -80,7 +80,7 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
     // If we couldn't parse the data properly, return the default structure
     return defaultResponse;
   } catch (error) {
-    console.error('Error in getCompanyTags:', error);
+
     // Return empty arrays rather than throwing
     return {
       three_months: [],

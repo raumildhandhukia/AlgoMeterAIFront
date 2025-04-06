@@ -97,7 +97,7 @@ const CompanySearch = () => {
       setPagination(response.pagination);
     } catch (err) {
       setError("Failed to fetch questions. Please try again.");
-      console.error("Error fetching questions:", err);
+
     } finally {
       setIsLoading(false);
     }
@@ -152,32 +152,32 @@ const CompanySearch = () => {
   // Fetch company tags for a specific question
   const fetchCompanyTags = async (titleSlug: string) => {
     const url = `https://leetcode.com/problems/${titleSlug}/`;
-    console.log(`Fetching company tags for: ${url}`);
+
     setLoadingCompanyTags(prev => ({ ...prev, [titleSlug]: true }));
     
     try {
       // Make direct fetch call to see raw response
       const BASE = process.env.NEXT_PUBLIC_SERVER_URL;
-      console.log(`Direct API call to: ${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
+
       
       const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
-      console.log('Raw API response status:', response.status);
+
       
       if (!response.ok) {
         throw new Error(`API returned status: ${response.status}`);
       }
       debugger
       const rawData = await response.json();
-      console.log('Raw API response data:', rawData);
+
       
       // Update state with data
       setCompanyTagsData(prev => {
         const updatedData = { ...prev, [titleSlug]: rawData };
-        console.log('Updated company tags state:', updatedData);
+
         return updatedData;
       });
     } catch (err) {
-      console.error("Error fetching company tags:", err);
+
       // Set empty data structure to avoid errors in rendering
       setCompanyTagsData(prev => ({
         ...prev,
