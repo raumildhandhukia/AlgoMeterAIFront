@@ -10,7 +10,7 @@ export const analyzeCode = async (code: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ code_snippet: code }),
-      // credentials: 'include', // Add credentials to send cookies
+      credentials: 'include', // Add credentials to send cookies
     });
     const data = await response.json();
     if (response.status === 429) {
@@ -29,7 +29,7 @@ export const analyzeCode = async (code: string) => {
 export const fetchCompanyQuestions = async (slug: string, page: number = 1, limit: number = 100) => {
   try {
     const response = await fetch(`${QUESTIONS}/api/company-questions?slug=${slug}&page=${page}&limit=${limit}`, {
-
+      // credentials: 'include', // Add credentials to send cookies
     });
     
     if (!response.ok) {

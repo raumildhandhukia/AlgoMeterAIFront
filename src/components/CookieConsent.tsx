@@ -26,15 +26,15 @@ const CookieConsent = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
         <div className="text-white mb-4 md:mb-0">
           <p className="text-sm md:text-base">
-            This website uses cookies to enhance your experience and enable persistent device tracking. 
-            By clicking "I Acknowledge", you consent to our use of cookies.
+            This website uses cookies to enhance your experience.
+            By clicking "Acknowledge", you consent to our use of cookies.
           </p>
         </div>
         <button
           onClick={handleAccept}
           className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          I Acknowledge
+          Acknowledge
         </button>
       </div>
     </div>

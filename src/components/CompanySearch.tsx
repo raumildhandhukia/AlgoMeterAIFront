@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { fetchCompanyQuestions } from "@/services/api";
-import { getCompanyTags, CompanyTagsResponse } from "@/services/companyTags";
+import { CompanyTagsResponse } from "@/services/companyTags";
 import companyData from "@/data/company.json";
 import Fuse from "fuse.js";
 import type { FuseResult } from "fuse.js";
@@ -160,13 +160,14 @@ const CompanySearch = () => {
       const BASE = process.env.NEXT_PUBLIC_SERVER_URL;
 
       
-      const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`, {
+        credentials: 'include', // Add credentials to send cookies
+      });
 
       
       if (!response.ok) {
         throw new Error(`API returned status: ${response.status}`);
       }
-      debugger
       const rawData = await response.json();
 
       
