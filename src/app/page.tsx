@@ -8,7 +8,7 @@ export default function Page() {
           <span className="text-gradient">Company-wise</span> LeetCode Questions
         </h1>
         <p className="text-gray-300 text-lg lg:text-xl">
-          Search for interview questions asked by top tech companies
+          Search for interview questions asked by 1000+ tech companies
         </p>
       </div>
       <CompanySearch />
