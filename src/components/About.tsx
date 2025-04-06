@@ -40,25 +40,20 @@ const About: React.FC = () => {
         Let's demystify algorithms together!
       </p>
 
-      <h2 className="text-2xl font-semibold mt-8 mb-4">Technologies Used</h2>
-      <p className="text-lg font-semibold mb-4 text-gradient">
-        &lt;/&gt; Unveiling the Tech Stack Behind the Magic &lt;/&gt;
+      <h2 className="text-2xl font-semibold mt-8 mb-4">Company-Wise Questions</h2>
+      <p className="mb-4">
+        Our platform now features a comprehensive collection of company-wise interview questions sorted by frequency. This powerful tool allows you to:
       </p>
-      <h3 className="text-xl font-semibold mt-4 mb-2">Frontend</h3>
-      <ul className="list-disc list-inside mb-4">
-        <li>React with TypeScript</li>
-        <li>Tailwind CSS for styling</li>
-        <li>Vite as the build tool</li>
-        <li>MUI Charts for data visualization</li>
-        <li>CodeMirror for the code editor</li>
+      <ul className="list-disc list-inside mb-4 space-y-2">
+        <li>Browse questions from top tech companies like Google, Amazon, Meta, and Microsoft</li>
+        <li>See questions ranked by their frequency in actual interviews</li>
+        <li>Access detailed frequency data showing which companies have asked each question in the last 3 months, 6 months, and beyond</li>
+        <li>Prepare more effectively by focusing on the questions most likely to appear in your upcoming interviews</li>
       </ul>
-      <h3 className="text-xl font-semibold mt-4 mb-2">Backend</h3>
-      <ul className="list-disc list-inside mb-4">
-        <li>Python</li>
-        <li>FastAPI</li>
-        <li>Gemini API for AI-powered analysis</li>
-        <li>Redis for rate limiting</li>
-      </ul>
+      <p className="mb-4">
+        The frequency data is regularly updated to reflect the latest interview trends, giving you the most current information to guide your preparation strategy.
+      </p>
+
       <p className="mt-8">
         For more information or to connect with the developer, visit the links
         in the footer.
