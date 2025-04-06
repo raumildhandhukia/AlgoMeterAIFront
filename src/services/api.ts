@@ -10,7 +10,7 @@ export const analyzeCode = async (code: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ code_snippet: code }),
-      credentials: 'include', // Add credentials to send cookies
+      // credentials: 'include', // Add credentials to send cookies
     });
     const data = await response.json();
     if (response.status === 429) {
