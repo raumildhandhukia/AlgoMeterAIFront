@@ -26,10 +26,8 @@ const About: React.FC = () => {
       <h2 className="text-2xl font-semibold mt-8 mb-4">The Developer</h2>
       <p className="mb-4">
         Hello, world! I'm{" "}
-        <span className="text-gradient text-2xl hover:underline">
-          <a href="https://www.linkedin.com/in/raumild/" target="_blank">
-            Raumil Dhandhukia
-          </a>
+        <span className="text-gradient text-2xl">
+          the developer of AlgoMeter AI
         </span>
         , the creator of AlgoMeter AI. As a passionate software engineer, I've
         always been fascinated by algorithm analysis and its impact on code

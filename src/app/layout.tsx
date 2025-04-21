@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Calculate the time and space complexity of your code using Big O notation. ",
 
-  authors: [{ name: "Raumil Dhandhukia" }],
+  authors: [{ name: "AlgoMeter AI Team" }],
   openGraph: {
     title: "AlgoMeter AI",
     description:

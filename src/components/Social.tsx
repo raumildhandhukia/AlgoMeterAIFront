@@ -3,7 +3,7 @@ const socialMedia = [
   {
     id: 1,
     img: "./git.svg",
-    link: "https://github.com/raumildhandhukia",
+    link: "#", // Removed personal GitHub link
   },
 ];
 
@@ -14,7 +14,7 @@ export const Social = () => {
         key="email"
         className="w-10 h-10 cursor-pointer flex justify-center items-center border"
       >
-        <a href="mailto:raumild@gmail.com">
+        <a href="#"> {/* Removed personal email */}
           <SiGmail />
         </a>
       </div>

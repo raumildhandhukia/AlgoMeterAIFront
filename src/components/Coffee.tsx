@@ -15,7 +15,7 @@ export const BuyMeCoffee = () => {
           />
         </div>
 
-        <a href="https://buymeacoffee.com/raumildhandhukia" target="_blank">
+        <a href="#" target="_blank"> {/* Removed personal Buy Me Coffee link */}
           <button className="px-8 rounded-none hover:underline">
             <span className="text-lg ">Click here to buy me a coffee</span>
             <span className="ml-4 text-2xl">☕</span>

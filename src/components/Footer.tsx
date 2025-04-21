@@ -9,8 +9,8 @@ export default function Footer() {
       <div className="flex justify-center items-center text-sm lg:text-lg">
         <p>
           made with ❤️ by{" "}
-          <span className="text-red-400 font-bold tracking-widest">
-            @raumildhandhukia
+          <span className="text-red-400 font-bold">
+            AlgoMeter AI Team
           </span>
         </p>
       </div>
