@@ -279,12 +279,14 @@ const CompanySearch = () => {
   };
 
   // Handle Get Detailed Frequency button click
+  /*
   const handleGetDetailedFrequency = (titleSlug: string) => {
     // Always fetch fresh data when the button is clicked
     fetchCompanyTags(titleSlug);
     // Show the detailed tags panel
     setShowDetailedTags(prev => ({ ...prev, [titleSlug]: true }));
   };
+  */
 
   return (
     <div className="w-full">
@@ -481,6 +483,7 @@ const CompanySearch = () => {
                     </div>
                   )}
 
+                  {/* Get Detailed Frequency button commented out
                   <button
                     onClick={() => handleGetDetailedFrequency(question.titleSlug)}
                     className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors ml-2"
@@ -501,6 +504,7 @@ const CompanySearch = () => {
                       </span>
                     )}
                   </button>
+                  */}
 
                   <div className="flex flex-wrap gap-1 ml-auto">
                     {question.topicTags.map((tag) => (
