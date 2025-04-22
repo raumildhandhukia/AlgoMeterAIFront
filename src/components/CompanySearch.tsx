@@ -309,6 +309,13 @@ const CompanySearch = () => {
     return "text-gray-400";
   };
 
+  const handleGetDetailedFrequency = (titleSlug: string) => {
+    // Always fetch fresh data when the button is clicked
+    fetchCompanyTags(titleSlug);
+    // Show the detailed tags panel
+    setShowDetailedTags(prev => ({ ...prev, [titleSlug]: true }));
+  };
+
   // Fetch company tags for a specific question
   const fetchCompanyTags = async (titleSlug: string) => {
     const url = `https://leetcode.com/problems/${titleSlug}/`;
@@ -551,6 +558,28 @@ const CompanySearch = () => {
                       </span>
                     </div>
                   )}
+                  
+                   <button
+                     onClick={() => handleGetDetailedFrequency(question.titleSlug)}
+                     className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors ml-2"
+                   >
+                     {loadingCompanyTags[question.titleSlug] ? (
+                       <span className="flex items-center">
+                         <span className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                         Loading...
+                       </span>
+                     ) : (
+                       <span className="flex items-center">
+                         Get Detailed Frequency
+                         {showDetailedTags[question.titleSlug] ? (
+                           <ChevronUp className="w-3 h-3 ml-1" />
+                         ) : (
+                           <ChevronDown className="w-3 h-3 ml-1" />
+                         )}
+                       </span>
+                     )}
+                   </button>
+                  
 
                   <div className="flex flex-wrap gap-1 ml-auto">
                     {question.topicTags.map((tag) => (
@@ -562,7 +591,95 @@ const CompanySearch = () => {
                       </span>
                     ))}
                   </div>
+                
                 </div>
+                {showDetailedTags[question.titleSlug] && (
+                   <div className="mt-4 bg-gray-750 p-3 rounded-md border border-gray-700">
+                     <div className="flex justify-between items-center mb-2">
+                       <h3 className="text-sm font-medium text-white">Company Tags</h3>
+                       <button 
+                         onClick={() => toggleDetailedTags(question.titleSlug)}
+                         className="text-gray-400 hover:text-white"
+                       >
+                         <X className="w-4 h-4" />
+                       </button>
+                     </div>
+ 
+                     {loadingCompanyTags[question.titleSlug] && (
+                       <div className="flex justify-center items-center py-8">
+                         <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                         <span className="ml-2 text-gray-300">Loading company data... It might take upto 30 seconds. Please be patient.</span>
+                       </div>
+                     )}
+ 
+                     {!loadingCompanyTags[question.titleSlug] && !companyTagsData[question.titleSlug] && (
+                       <div className="text-center py-4">
+                         <p className="text-gray-400">No company data available</p>
+                         <button 
+                           onClick={() => fetchCompanyTags(question.titleSlug)}
+                           className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors"
+                         >
+                           Retry
+                         </button>
+                       </div>
+                     )}
+ 
+                     {!loadingCompanyTags[question.titleSlug] && companyTagsData[question.titleSlug] && (
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                         {/* Last 3 Months */}
+                         <div className="bg-gray-800 p-3 rounded-md">
+                           <h4 className="text-xs font-medium text-blue-400 mb-2">Last 3 Months</h4>
+                           <div className="space-y-2 max-h-60 overflow-y-auto">
+                             {companyTagsData[question.titleSlug]?.three_months?.length > 0 ? (
+                               companyTagsData[question.titleSlug].three_months.map((tag, idx) => (
+                                 <div key={tag.slug || `three-month-${idx}`} className="flex justify-between items-center text-xs">
+                                   <span className="text-gray-300">{tag.name}</span>
+                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                 </div>
+                               ))
+                             ) : (
+                               <p className="text-gray-500 text-xs">No data available</p>
+                             )}
+                           </div>
+                         </div>
+ 
+                         {/* Last 6 Months */}
+                         <div className="bg-gray-800 p-3 rounded-md">
+                           <h4 className="text-xs font-medium text-yellow-400 mb-2">Last 6 Months</h4>
+                           <div className="space-y-2 max-h-60 overflow-y-auto">
+                             {companyTagsData[question.titleSlug]?.six_months?.length > 0 ? (
+                               companyTagsData[question.titleSlug].six_months.map((tag, idx) => (
+                                 <div key={tag.slug || `six-month-${idx}`} className="flex justify-between items-center text-xs">
+                                   <span className="text-gray-300">{tag.name}</span>
+                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                 </div>
+                               ))
+                             ) : (
+                               <p className="text-gray-500 text-xs">No data available</p>
+                             )}
+                           </div>
+                         </div>
+ 
+                         {/* More than 6 Months */}
+                         <div className="bg-gray-800 p-3 rounded-md">
+                           <h4 className="text-xs font-medium text-green-400 mb-2">More than 6 Months</h4>
+                           <div className="space-y-2 max-h-60 overflow-y-auto">
+                             {companyTagsData[question.titleSlug]?.more_than_six_months?.length > 0 ? (
+                               companyTagsData[question.titleSlug].more_than_six_months.map((tag, idx) => (
+                                 <div key={tag.slug || `more-than-six-${idx}`} className="flex justify-between items-center text-xs">
+                                   <span className="text-gray-300">{tag.name}</span>
+                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                 </div>
+                               ))
+                             ) : (
+                               <p className="text-gray-500 text-xs">No data available</p>
+                             )}
+                           </div>
+                         </div>
+                       </div>
+                     )}
+                   </div>
+                 )}
               </div>
             ))}
           </div>
