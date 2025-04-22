@@ -30,14 +30,7 @@ export default function Header() {
               FAQ
             </Link>
           </li>
-          <li>
-            <Link
-              href="/about"
-              className="text-gray-300 hover:text-white transition duration-300"
-            >
-              About
-            </Link>
-          </li>
+
         </ul>
       </nav>
     </header>

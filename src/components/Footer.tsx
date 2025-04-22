@@ -6,14 +6,7 @@ export default function Footer() {
       <div className="flex justify-center items-center mb-5">
         <Social />
       </div>
-      <div className="flex justify-center items-center text-sm lg:text-lg">
-        <p>
-          made with ❤️ by{" "}
-          <span className="text-red-400 font-bold">
-            AlgoMeter AI Team
-          </span>
-        </p>
-      </div>
+
       <div className="flex justify-center items-center text-sm lg:text-lg">
         <p>&copy; 2024 AlgoMeter AI</p>
       </div>

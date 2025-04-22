@@ -151,13 +151,13 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
               </motion.button>
               
               {/* Difficulty buttons in a row */}
-              <div className="flex flex-wrap gap-2 mt-2">
-                {ALL_DIFFICULTIES.map((diff) => (
+              <div className="flex justify-between w-full mt-2 gap-2">
+                {ALL_DIFFICULTIES.filter(diff => diff !== 'all').map((diff) => (
                   <button
                     key={diff}
                     onClick={() => !disabled && handleDifficultyChange(diff)}
                     disabled={disabled}
-                    className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 ${getDifficultyColor(diff)} ${tempDifficulty === diff ? 'ring-2 ring-white ring-opacity-50 shadow-lg transform scale-105' : 'opacity-80 hover:opacity-100'} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${getDifficultyColor(diff)} ${tempDifficulty === diff ? 'ring-2 ring-white ring-opacity-50 shadow-lg transform scale-105' : 'opacity-80 hover:opacity-100'} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                   >
                     {diff.charAt(0).toUpperCase() + diff.slice(1)}
                   </button>
