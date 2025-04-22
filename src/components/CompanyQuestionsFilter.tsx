@@ -14,11 +14,13 @@ interface CompanyQuestionsFilterProps {
     difficulty?: 'easy' | 'medium' | 'hard' | 'all',
     resetPage?: boolean
   }) => void;
+  disabled?: boolean;
 }
 
 const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({ 
   initialFilters = {}, 
-  onFilterChange 
+  onFilterChange,
+  disabled = false
 }) => {
   const [difficulty, setDifficulty] = useState<string | null>(initialFilters.difficulty || 'all');
   const [minFrequency, setMinFrequency] = useState<number>(initialFilters.minFrequency || 0);
@@ -149,19 +151,16 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
               </motion.button>
               
               {/* Difficulty buttons in a row */}
-              <div className="flex space-x-2">
-                {DIFFICULTIES.map(diff => (
-                  <motion.button
+              <div className="flex flex-wrap gap-2 mt-2">
+                {ALL_DIFFICULTIES.map((diff) => (
+                  <button
                     key={diff}
-                    onClick={() => handleDifficultyChange(diff)}
-                    className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${getDifficultyColor(diff)} ${
-                      tempDifficulty === diff ? 'text-white' : 'text-gray-300'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    onClick={() => !disabled && handleDifficultyChange(diff)}
+                    disabled={disabled}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 ${getDifficultyColor(diff)} ${tempDifficulty === diff ? 'ring-2 ring-white ring-opacity-50 shadow-lg transform scale-105' : 'opacity-80 hover:opacity-100'} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                   >
                     {diff.charAt(0).toUpperCase() + diff.slice(1)}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -234,7 +233,8 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
                   max="100" 
                   value={tempMinFrequency}
                   onChange={(e) => handleFrequencyChange(Number(e.target.value))}
-                  className="absolute w-full h-8 top-1/2 -translate-y-1/2 opacity-0 cursor-pointer z-20"
+                  disabled={disabled}
+                  className={`absolute w-full h-8 top-1/2 -translate-y-1/2 opacity-0 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'} z-20`}
                 />
                 
                 {/* Vertical line indicator */}
@@ -270,18 +270,20 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
         <div className="flex items-center space-x-4 self-start md:self-center md:mr-4 mt-6 md:mt-0">
           <motion.button 
             onClick={applyFilters} 
-            className="bg-blue-500 text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-md w-32 h-9 flex items-center justify-center"
-            whileHover={{ scale: 1.03, backgroundColor: '#3b82f6' }}
-            whileTap={{ scale: 0.97 }}
+            disabled={disabled}
+            className={`${disabled ? 'bg-blue-500/50 cursor-not-allowed' : 'bg-blue-500'} text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-md w-32 h-9 flex items-center justify-center`}
+            whileHover={!disabled ? { scale: 1.03, backgroundColor: '#3b82f6' } : undefined}
+            whileTap={!disabled ? { scale: 0.97 } : undefined}
             transition={{ type: 'spring', stiffness: 400, damping: 15 }}
           >
             Apply Filters
           </motion.button>
           <motion.button 
             onClick={resetFilters} 
-            className="bg-red-500 text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-md w-20 h-9 flex items-center justify-center"
-            whileHover={{ scale: 1.03, backgroundColor: '#ef4444' }}
-            whileTap={{ scale: 0.97 }}
+            disabled={disabled}
+            className={`${disabled ? 'bg-red-500/50 cursor-not-allowed' : 'bg-red-500'} text-white px-4 py-1.5 rounded-md text-sm font-medium shadow-md w-20 h-9 flex items-center justify-center`}
+            whileHover={!disabled ? { scale: 1.03, backgroundColor: '#ef4444' } : undefined}
+            whileTap={!disabled ? { scale: 0.97 } : undefined}
             transition={{ type: 'spring', stiffness: 400, damping: 15 }}
           >
             Reset

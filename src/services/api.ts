@@ -53,12 +53,24 @@ export const fetchCompanyQuestions = async (
     const response = await fetch(`${QUESTIONS}/api/company-questions?${queryParams.toString()}`, {
       // credentials: 'include', // Add credentials to send cookies
     });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch company questions');
-    }
     
     const data = await response.json();
+    
+    // Handle rate limiting (429 status)
+    if (response.status === 429) {
+      return {
+        statusCode: 429,
+        success: false,
+        error: data.error || "Rate limit exceeded. Please try again later.",
+        resetTime: data.resetTime,
+        isRateLimited: true
+      };
+    }
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch company questions');
+    }
+    
     return data;
   } catch (error) {
     throw error;
