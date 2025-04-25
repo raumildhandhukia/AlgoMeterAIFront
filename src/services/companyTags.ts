@@ -25,6 +25,7 @@ export const getCompanyTags = async (url: string): Promise<CompanyTagsResponse> 
     
     // Make the API request
     const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`);
+    debugger;
 
     
     if (!response.ok) {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { fetchCompanyQuestions } from "@/services/api";
-import { CompanyTagsResponse } from "@/services/companyTags";
+import { CompanyTagsResponse, getCompanyTags } from "@/services/companyTags";
 import companyData from "@/data/company.json";
 import Fuse from "fuse.js";
 import type { FuseResult } from "fuse.js";
@@ -418,7 +418,7 @@ const CompanySearch: React.FC = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/companyTags?url=${encodeURIComponent(url)}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/company-tags?url=${encodeURIComponent(url)}`
       );
       debugger;
 
