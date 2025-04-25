@@ -27,30 +27,38 @@ export const analyzeCode = async (code: string) => {
 };
 
 export const fetchCompanyQuestions = async (
-  slug: string, 
+  companySlugs: string[], 
   page: number = 1, 
   limit: number = 100, 
   options: {
     match?: 'all' | 'any', 
     minFrequency?: number, 
     difficulty?: 'easy' | 'medium' | 'hard', 
-    topics?: string[]
+    topics?: string[],
+    companies?: string[],
+    favSlug?: string
   } = {}
 ) => {
   try {
     const queryParams = new URLSearchParams({
-      slug,
       page: page.toString(),
       limit: limit.toString(),
     });
+
+    // Add company slugs as a single comma-separated parameter
+    if (companySlugs.length > 0) {
+      queryParams.append('slug', companySlugs.join(','));
+    }
 
     // Add optional parameters
     if (options.match) queryParams.append('match', options.match);
     if (options.minFrequency !== undefined) queryParams.append('minFrequency', options.minFrequency.toString());
     if (options.difficulty) queryParams.append('difficulty', options.difficulty);
     if (options.topics && options.topics.length > 0) queryParams.append('topics', options.topics.join(','));
-
-    const response = await fetch(`${QUESTIONS}/api/company-questions?${queryParams.toString()}`, {
+    if (options.companies && options.companies.length > 0) queryParams.append('companies', options.companies.join(','));
+    if (options.favSlug) queryParams.append('favSlug', options.favSlug); 
+   
+    const response = await fetch(`${QUESTIONS}/api/modular-questions?${queryParams.toString()}`, {
       // credentials: 'include', // Add credentials to send cookies
     });
     
@@ -70,7 +78,6 @@ export const fetchCompanyQuestions = async (
     if (!response.ok) {
       throw new Error(data.error || 'Failed to fetch company questions');
     }
-    
     return data;
   } catch (error) {
     throw error;

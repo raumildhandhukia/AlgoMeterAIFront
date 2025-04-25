@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { fetchCompanyQuestions } from "@/services/api";
 import { CompanyTagsResponse } from "@/services/companyTags";
 import companyData from "@/data/company.json";
@@ -11,7 +10,7 @@ import { Search, ChevronDown, ChevronUp, X, AlertCircle, Clock } from "lucide-re
 import SkeletonLoader from "@/components/ui/SkeletonLoader";
 import CompanyQuestionsFilter from "@/components/CompanyQuestionsFilter";
 
-// Define types for company data
+// Type definitions
 interface Company {
   name: string;
   slug: string;
@@ -29,12 +28,13 @@ interface Question {
     slug: string;
     __typename: string;
   }[];
-  status: string;
-  paidOnly: boolean;
-  isInMyFavorites: boolean;
-  acRate: number;
+  link: string;
   frequency: number;
-  __typename: string;
+  companies: {
+    company: string;
+    slug: string;
+    frequency: number;
+  }[];
 }
 
 interface PaginationInfo {
@@ -46,43 +46,56 @@ interface PaginationInfo {
   hasPrevPage: boolean;
 }
 
+interface FilterOptions {
+  match?: 'all' | 'any';
+  minFrequency?: number;
+  difficulty?: 'easy' | 'medium' | 'hard' | 'all';
+  topics?: string[];
+}
+
 interface CompanyQuestionsResponse {
   statusCode: number;
   success: boolean;
   slug: string;
   pagination?: PaginationInfo;
   questionCount?: number;
-  questions?: Question[];
+  problems?: Question[];
   error?: string;
   resetTime?: number;
   isRateLimited?: boolean;
 }
 
-const CompanySearch = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [showResults, setShowResults] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+const CompanySearch: React.FC = () => {
+  // Core state
+  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const searchResultsRef = useRef<HTMLDivElement>(null);
-  const [companyTagsData, setCompanyTagsData] = useState<Record<string, CompanyTagsResponse>>({});
-  const [loadingCompanyTags, setLoadingCompanyTags] = useState<Record<string, boolean>>({});
-  const [showDetailedTags, setShowDetailedTags] = useState<Record<string, boolean>>({});
-  const [currentFilters, setCurrentFilters] = useState<{
-    match?: 'all' | 'any', 
-    minFrequency?: number, 
-    difficulty?: 'easy' | 'medium' | 'hard', 
-    topics?: string[]
-  }>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Filter state
+  const [currentFilters, setCurrentFilters] = useState<FilterOptions>({
+    difficulty: 'all',
+    minFrequency: 0,
+    match: 'any'
+  });
+  
+  // Rate limiting state
   const [rateLimitInfo, setRateLimitInfo] = useState<{
     isRateLimited: boolean;
     resetTime: number | null;
     message: string | null;
     secondsLeft: number | null;
   }>({ isRateLimited: false, resetTime: null, message: null, secondsLeft: null });
+  
+  // UI state
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showResults, setShowResults] = useState<boolean>(false);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
+  const [companyTagsData, setCompanyTagsData] = useState<Record<string, CompanyTagsResponse>>({});
+  const [loadingCompanyTags, setLoadingCompanyTags] = useState<Record<string, boolean>>({});
+  const [showDetailedTags, setShowDetailedTags] = useState<Record<string, boolean>>({});
 
   // Setup fuzzy search with Fuse.js
   const fuse = new Fuse(companyData.companyTags, {
@@ -91,38 +104,37 @@ const CompanySearch = () => {
     includeScore: true,
   });
 
-  const getFilteredCompanies = () => {
+  const getFilteredCompanies = (): Company[] => {
     if (!searchTerm) return [];
     return fuse.search(searchTerm).slice(0, 10).map((result: FuseResult<Company>) => result.item);
   };
 
-  const handleCompanySelect = (company: Company) => {
-    setSelectedCompany(company);
-    setSearchTerm(company.name);
-    setShowResults(false);
-    setCurrentPage(1);
-    setCurrentFilters({});
-    setRateLimitInfo({ isRateLimited: false, resetTime: null, message: null, secondsLeft: null });
-    fetchQuestions(company.slug, 1);
-  };
-
-  const fetchQuestions = async (
-    slug: string, 
-    page: number, 
-    filters: {
-      match?: 'all' | 'any', 
-      minFrequency?: number, 
-      difficulty?: 'easy' | 'medium' | 'hard', 
-      topics?: string[]
-    } = {}
+  // Core data fetching function
+  const fetchQuestionsData = async (
+    companySlugs: string[],
+    page: number = 1,
+    filters: FilterOptions = {}
   ) => {
+    if (companySlugs.length === 0) {
+      setQuestions([]);
+      setPagination(null);
+      setError(null);
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetchCompanyQuestions(slug, page, 100, filters);
+      // Convert filters for API
+      const apiFilters: any = { ...filters };
+      if (apiFilters.difficulty === 'all') {
+        delete apiFilters.difficulty;
+      }
       
-      // Handle rate limiting
+      const response = await fetchCompanyQuestions(companySlugs, page, 100, apiFilters);
+      
       if (response.statusCode === 429 || response.isRateLimited) {
         const resetTimeInSeconds = response.resetTime || 60;
         const resetTimeFormatted = Math.ceil(resetTimeInSeconds);
@@ -138,84 +150,95 @@ const CompanySearch = () => {
         return;
       }
       
-      // Only update the state with new data if the request was successful
-      if (response.success && response.questions) {
-        setQuestions(response.questions);
+      if (response.success && response.problems) {
+        setQuestions(response.problems);
         setPagination(response.pagination || null);
-        // Update the current page after successful response
-        if (page !== currentPage) {
-          setCurrentPage(page);
-        }
-        // Clear any rate limit info if the request was successful
+        setCurrentPage(page);
         setRateLimitInfo({ isRateLimited: false, resetTime: null, message: null, secondsLeft: null });
       } else {
-        setError(response.error || "Failed to fetch questions. Please try again.");
+        setError(response.error || 'Failed to fetch questions');
         setQuestions([]);
       }
     } catch (err) {
-      setError("Failed to fetch questions. Please try again.");
+      setError('An error occurred while fetching questions');
       setQuestions([]);
     } finally {
       setIsLoading(false);
     }
   };
+  
+  // Company selection handler
+  const handleCompanySelect = (company: Company) => {
+    // Get current selected companies
+    const newSelectedCompanies = [...selectedCompanies];
+    
+    // Toggle selection
+    if (newSelectedCompanies.includes(company.slug)) {
+      newSelectedCompanies.splice(newSelectedCompanies.indexOf(company.slug), 1);
+    } else {
+      newSelectedCompanies.push(company.slug);
+    }
+    
+    // Close dropdown and update search term
+    setSearchTerm(company.name);
+    setShowResults(false);
+    
+    // Update selected companies
+    setSelectedCompanies(newSelectedCompanies);
+    
+    // Fetch data with new selection
+    if (newSelectedCompanies.length > 0 && !rateLimitInfo.isRateLimited) {
+      fetchQuestionsData(newSelectedCompanies, 1, currentFilters);
+    }
+  };
 
   const handlePageChange = (page: number) => {
-    if (!selectedCompany || rateLimitInfo.isRateLimited) return;
-    // Don't update currentPage here - will update after successful response
-    fetchQuestions(selectedCompany.slug, page, currentFilters);
+    if (page === currentPage || isLoading || rateLimitInfo.isRateLimited) return;
+    fetchQuestionsData(selectedCompanies, page, currentFilters);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleFilterChange = (filters: {
-    match?: 'all' | 'any', 
-    minFrequency?: number, 
-    difficulty?: 'easy' | 'medium' | 'hard' | 'all', 
-    topics?: string[],
+  // Filter application handler
+  const handleFilterChange = (filters: FilterOptions & {
+    selectedCompanies?: string[],
     resetPage?: boolean
   }) => {
-    // Don't apply filters if rate limited
     if (rateLimitInfo.isRateLimited) return;
     
-    // Always reset the current page to 1 when filters change
-    if (filters.resetPage) {
-      setCurrentPage(1);
+    // Create a copy of current filters
+    const newFilters = { ...currentFilters };
+    
+    // Update filter values
+    if (filters.difficulty) {
+      newFilters.difficulty = filters.difficulty;
     }
-    
-    // Create a new filters object
-    const newFilters: {
-      match?: 'all' | 'any', 
-      minFrequency?: number, 
-      difficulty?: 'easy' | 'medium' | 'hard', 
-      topics?: string[]
-    } = {};
-    
-    // Only add difficulty filter if it's not 'all'
-    if (filters.difficulty && filters.difficulty !== 'all') {
-      newFilters.difficulty = filters.difficulty as 'easy' | 'medium' | 'hard';
-    }
-    
-    // Add min frequency filter if it's greater than 0
-    if (filters.minFrequency !== undefined && filters.minFrequency > 0) {
+    if (filters.minFrequency !== undefined) {
       newFilters.minFrequency = filters.minFrequency;
     }
-    
-    // Add match type filter if it's specified
     if (filters.match) {
       newFilters.match = filters.match;
     }
-    
-    // Add topics filter if it's specified
-    if (filters.topics && filters.topics.length > 0) {
+    if (filters.topics) {
       newFilters.topics = filters.topics;
     }
     
-    // Update current filters
+    // Update current filters in state
     setCurrentFilters(newFilters);
     
-    // Fetch questions with new filters
-    if (selectedCompany) {
-      fetchQuestions(selectedCompany.slug, filters.resetPage ? 1 : currentPage, newFilters);
+    // Update companies if provided
+    let companiesForFetch = selectedCompanies;
+    if (filters.selectedCompanies !== undefined) {
+      companiesForFetch = filters.selectedCompanies;
+      setSelectedCompanies(filters.selectedCompanies);
+    }
+    
+    // Fetch data with new filters
+    if (companiesForFetch.length > 0) {
+      fetchQuestionsData(
+        companiesForFetch, 
+        filters.resetPage ? 1 : currentPage, 
+        newFilters
+      );
     }
   };
 
@@ -238,7 +261,7 @@ const CompanySearch = () => {
     );
   };
 
-  // Countdown timer for rate limit
+  // Rate limit countdown
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
     
@@ -247,12 +270,10 @@ const CompanySearch = () => {
         setRateLimitInfo(prev => {
           const newSecondsLeft = (prev.secondsLeft || 0) - 1;
           
-          // If countdown reaches zero, clear the rate limit
           if (newSecondsLeft <= 0) {
             return { isRateLimited: false, resetTime: null, message: null, secondsLeft: null };
           }
           
-          // Update the message with the new countdown
           return {
             ...prev,
             secondsLeft: newSecondsLeft,
@@ -262,33 +283,27 @@ const CompanySearch = () => {
       }, 1000);
     }
     
-    // Clear interval on component unmount or when rate limit is cleared
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
     };
   }, [rateLimitInfo.isRateLimited, rateLimitInfo.secondsLeft]);
-  
-  // Close search results when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchResultsRef.current &&
-        !searchResultsRef.current.contains(event.target as Node)
-      ) {
+      if (searchResultsRef.current && !searchResultsRef.current.contains(event.target as Node)) {
         setShowResults(false);
       }
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
+    
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
-  // Get difficulty color
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty: string): string => {
     switch (difficulty.toUpperCase()) {
       case "EASY":
         return "bg-green-500";
@@ -301,60 +316,52 @@ const CompanySearch = () => {
     }
   };
 
-  // Get frequency color
-  const getFrequencyColor = (frequency: number) => {
+  const getFrequencyColor = (frequency: number): string => {
     if (frequency >= 75) return "text-red-500";
     if (frequency >= 50) return "text-yellow-500";
     if (frequency >= 25) return "text-green-500";
     return "text-gray-400";
   };
 
-  const handleGetDetailedFrequency = (titleSlug: string) => {
-    // Always fetch fresh data when the button is clicked
-    fetchCompanyTags(titleSlug);
-    // Show the detailed tags panel
-    setShowDetailedTags(prev => ({ ...prev, [titleSlug]: true }));
+  const handleGetDetailedFrequency = (titleSlug: string): void => {
+    if (!companyTagsData[titleSlug]) {
+      fetchCompanyTags(titleSlug);
+    }
+    setShowDetailedTags((prev: Record<string, boolean>) => ({ ...prev, [titleSlug]: true }));
   };
 
-  // Fetch company tags for a specific question
-  const fetchCompanyTags = async (titleSlug: string) => {
+  const fetchCompanyTags = async (titleSlug: string): Promise<void> => {
     const url = `https://leetcode.com/problems/${titleSlug}/`;
 
-    setLoadingCompanyTags(prev => ({ ...prev, [titleSlug]: true }));
+    setLoadingCompanyTags((prev: Record<string, boolean>) => ({ ...prev, [titleSlug]: true }));
     
     try {
-      // Make direct fetch call to see raw response
-      const BASE = process.env.NEXT_PUBLIC_SERVER_URL;
-
-      const response = await fetch(`${BASE}/api/company-tags?url=${encodeURIComponent(url)}`, {
-        credentials: 'include', // Add credentials to send cookies
-      });
-
+      const response = await fetch(`/api/companyTags?url=${encodeURIComponent(url)}`);
+      
       if (!response.ok) {
-        throw new Error(`API returned status: ${response.status}`);
+        throw new Error('Failed to fetch company tags');
       }
       
-      const data = await response.json();
+      const data: CompanyTagsResponse = await response.json();
       
-      setCompanyTagsData(prev => ({
+      setCompanyTagsData((prev: Record<string, CompanyTagsResponse>) => ({
         ...prev,
         [titleSlug]: data
       }));
+      
     } catch (error) {
-      console.error("Error fetching company tags:", error);
+      console.error('Error fetching company tags:', error);
     } finally {
-      setLoadingCompanyTags(prev => ({ ...prev, [titleSlug]: false }));
+      setLoadingCompanyTags((prev: Record<string, boolean>) => ({ ...prev, [titleSlug]: false }));
     }
   };
 
-  // Toggle showing detailed tags
-  const toggleDetailedTags = (titleSlug: string) => {
-    setShowDetailedTags(prev => ({ ...prev, [titleSlug]: !prev[titleSlug] }));
+  const toggleDetailedTags = (titleSlug: string): void => {
+    setShowDetailedTags((prev: Record<string, boolean>) => ({ ...prev, [titleSlug]: !prev[titleSlug] }));
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Rate Limit Warning */}
       {rateLimitInfo.isRateLimited && (
         <div className="bg-red-900/50 border border-red-700 text-white p-4 rounded-lg mb-6 text-center">
           <div className="flex items-center justify-center mb-2">
@@ -373,9 +380,8 @@ const CompanySearch = () => {
         </div>
       )}
       
-      {/* Company Search Input */}
       <div className="relative mb-8">
-        <div className="relative">
+        {/* <div className="relative">
           <input
             type="text"
             value={searchTerm}
@@ -391,9 +397,8 @@ const CompanySearch = () => {
           <div className="absolute left-4 top-4 text-gray-400">
             <Search size={20} />
           </div>
-        </div>
+        </div> */}
 
-        {/* Search Results */}
         {showResults && searchTerm && (
           <div
             ref={searchResultsRef}
@@ -419,37 +424,34 @@ const CompanySearch = () => {
         )}
       </div>
 
-      {/* Filters */}
-      {selectedCompany && (
-        <div className="mb-6">
-          <CompanyQuestionsFilter 
-            onFilterChange={handleFilterChange} 
-            initialFilters={currentFilters}
-            disabled={rateLimitInfo.isRateLimited}
-          />
-        </div>
-      )}
+      <div className="mb-6">
+        <CompanyQuestionsFilter 
+          allCompanies={companyData.companyTags}
+          selectedCompanies={selectedCompanies}
+          currentFilters={currentFilters}
+          onFilterChange={handleFilterChange}
+          disabled={rateLimitInfo.isRateLimited}
+          isRateLimited={rateLimitInfo.isRateLimited}
+        />
+      </div>
 
-      {/* Loading State */}
       {isLoading && (
         <div className="mb-8">
           <SkeletonLoader />
         </div>
       )}
 
-      {/* Error State */}
       {error && !rateLimitInfo.isRateLimited && (
         <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-center my-8">
           <p>{error}</p>
         </div>
       )}
 
-      {/* Questions List */}
-      {!isLoading && selectedCompany && questions.length > 0 && (
+      {!isLoading && selectedCompanies.length > 0 && questions.length > 0 && (
         <div className="mb-10">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">
-              {selectedCompany.name} ({pagination?.total || 0} questions)
+              Questions from {selectedCompanies.length} companies ({pagination?.total || 0} questions)
             </h2>
             <div className="text-gray-400">
               Showing {((pagination?.page || 1) - 1) * (pagination?.limit || 0) + 1} to {Math.min(
@@ -459,7 +461,6 @@ const CompanySearch = () => {
             </div>
           </div>
           
-          {/* Pagination - Moved to top */}
           {pagination && pagination.totalPages > 1 && (
             <div className="flex justify-center mb-6 space-x-2">
               <button
@@ -476,7 +477,6 @@ const CompanySearch = () => {
               
               <div className="flex space-x-2">
                 {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                  // Logic to show pages around current page
                   let pageNum;
                   if (pagination.totalPages <= 5) {
                     pageNum = i + 1;
@@ -559,27 +559,27 @@ const CompanySearch = () => {
                     </div>
                   )}
                   
-                   <button
-                     onClick={() => handleGetDetailedFrequency(question.titleSlug)}
-                     className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors ml-2"
-                   >
-                     {loadingCompanyTags[question.titleSlug] ? (
-                       <span className="flex items-center">
-                         <span className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                         Loading...
-                       </span>
-                     ) : (
-                       <span className="flex items-center">
-                         Get Detailed Frequency
-                         {showDetailedTags[question.titleSlug] ? (
-                           <ChevronUp className="w-3 h-3 ml-1" />
-                         ) : (
-                           <ChevronDown className="w-3 h-3 ml-1" />
-                         )}
-                       </span>
-                     )}
-                   </button>
-                  
+                  <button
+                    onClick={() => handleGetDetailedFrequency(question.titleSlug)}
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors ml-2"
+                  >
+                    {loadingCompanyTags[question.titleSlug] ? (
+                      <span className="flex items-center">
+                        <span className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Loading...
+                      </span>
+                    ) : (
+                      <span className="flex items-center">
+                        Get Detailed Frequency
+                        {showDetailedTags[question.titleSlug] ? (
+                          <ChevronUp className="w-3 h-3 ml-1" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3 ml-1" />
+                        )}
+                      </span>
+                    )}
+                  </button>
+                 
 
                   <div className="flex flex-wrap gap-1 ml-auto">
                     {question.topicTags.map((tag) => (
@@ -594,105 +594,101 @@ const CompanySearch = () => {
                 
                 </div>
                 {showDetailedTags[question.titleSlug] && (
-                   <div className="mt-4 bg-gray-750 p-3 rounded-md border border-gray-700">
-                     <div className="flex justify-between items-center mb-2">
-                       <h3 className="text-sm font-medium text-white">Company Tags</h3>
-                       <button 
-                         onClick={() => toggleDetailedTags(question.titleSlug)}
-                         className="text-gray-400 hover:text-white"
-                       >
-                         <X className="w-4 h-4" />
-                       </button>
-                     </div>
+                  <div className="mt-4 bg-gray-750 p-3 rounded-md border border-gray-700">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-sm font-medium text-white">Company Tags</h3>
+                      <button 
+                        onClick={() => toggleDetailedTags(question.titleSlug)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
  
-                     {loadingCompanyTags[question.titleSlug] && (
-                       <div className="flex justify-center items-center py-8">
-                         <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                         <span className="ml-2 text-gray-300">Loading company data... It might take upto 30 seconds. Please be patient.</span>
-                       </div>
-                     )}
+                    {loadingCompanyTags[question.titleSlug] && (
+                      <div className="flex justify-center items-center py-8">
+                        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="ml-2 text-gray-300">Loading company data... It might take upto 30 seconds. Please be patient.</span>
+                      </div>
+                    )}
  
-                     {!loadingCompanyTags[question.titleSlug] && !companyTagsData[question.titleSlug] && (
-                       <div className="text-center py-4">
-                         <p className="text-gray-400">No company data available</p>
-                         <button 
-                           onClick={() => fetchCompanyTags(question.titleSlug)}
-                           className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors"
-                         >
-                           Retry
-                         </button>
-                       </div>
-                     )}
+                    {!loadingCompanyTags[question.titleSlug] && !companyTagsData[question.titleSlug] && (
+                      <div className="text-center py-4">
+                        <p className="text-gray-400">No company data available</p>
+                        <button 
+                          onClick={() => fetchCompanyTags(question.titleSlug)}
+                          className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    )}
  
-                     {!loadingCompanyTags[question.titleSlug] && companyTagsData[question.titleSlug] && (
-                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                         {/* Last 3 Months */}
-                         <div className="bg-gray-800 p-3 rounded-md">
-                           <h4 className="text-xs font-medium text-blue-400 mb-2">Last 3 Months</h4>
-                           <div className="space-y-2 max-h-60 overflow-y-auto">
-                             {companyTagsData[question.titleSlug]?.three_months?.length > 0 ? (
-                               companyTagsData[question.titleSlug].three_months.map((tag, idx) => (
-                                 <div key={tag.slug || `three-month-${idx}`} className="flex justify-between items-center text-xs">
-                                   <span className="text-gray-300">{tag.name}</span>
-                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
-                                 </div>
-                               ))
-                             ) : (
-                               <p className="text-gray-500 text-xs">No data available</p>
-                             )}
-                           </div>
-                         </div>
+                    {!loadingCompanyTags[question.titleSlug] && companyTagsData[question.titleSlug] && (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Last 3 Months */}
+                        <div className="bg-gray-800 p-3 rounded-md">
+                          <h4 className="text-xs font-medium text-blue-400 mb-2">Last 3 Months</h4>
+                          <div className="space-y-2 max-h-60 overflow-y-auto">
+                            {companyTagsData[question.titleSlug]?.three_months?.length > 0 ? (
+                              companyTagsData[question.titleSlug].three_months.map((tag, idx) => (
+                                <div key={tag.slug || `three-month-${idx}`} className="flex justify-between items-center text-xs">
+                                  <span className="text-gray-300">{tag.name}</span>
+                                  <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500 text-xs">No data available</p>
+                            )}
+                          </div>
+                        </div>
  
-                         {/* Last 6 Months */}
-                         <div className="bg-gray-800 p-3 rounded-md">
-                           <h4 className="text-xs font-medium text-yellow-400 mb-2">Last 6 Months</h4>
-                           <div className="space-y-2 max-h-60 overflow-y-auto">
-                             {companyTagsData[question.titleSlug]?.six_months?.length > 0 ? (
-                               companyTagsData[question.titleSlug].six_months.map((tag, idx) => (
-                                 <div key={tag.slug || `six-month-${idx}`} className="flex justify-between items-center text-xs">
-                                   <span className="text-gray-300">{tag.name}</span>
-                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
-                                 </div>
-                               ))
-                             ) : (
-                               <p className="text-gray-500 text-xs">No data available</p>
-                             )}
-                           </div>
-                         </div>
+                        {/* Last 6 Months */}
+                        <div className="bg-gray-800 p-3 rounded-md">
+                          <h4 className="text-xs font-medium text-yellow-400 mb-2">Last 6 Months</h4>
+                          <div className="space-y-2 max-h-60 overflow-y-auto">
+                            {companyTagsData[question.titleSlug]?.six_months?.length > 0 ? (
+                              companyTagsData[question.titleSlug].six_months.map((tag, idx) => (
+                                <div key={tag.slug || `six-month-${idx}`} className="flex justify-between items-center text-xs">
+                                  <span className="text-gray-300">{tag.name}</span>
+                                  <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500 text-xs">No data available</p>
+                            )}
+                          </div>
+                        </div>
  
-                         {/* More than 6 Months */}
-                         <div className="bg-gray-800 p-3 rounded-md">
-                           <h4 className="text-xs font-medium text-green-400 mb-2">More than 6 Months</h4>
-                           <div className="space-y-2 max-h-60 overflow-y-auto">
-                             {companyTagsData[question.titleSlug]?.more_than_six_months?.length > 0 ? (
-                               companyTagsData[question.titleSlug].more_than_six_months.map((tag, idx) => (
-                                 <div key={tag.slug || `more-than-six-${idx}`} className="flex justify-between items-center text-xs">
-                                   <span className="text-gray-300">{tag.name}</span>
-                                   <span className="text-gray-400">{tag.timesEncountered} times</span>
-                                 </div>
-                               ))
-                             ) : (
-                               <p className="text-gray-500 text-xs">No data available</p>
-                             )}
-                           </div>
-                         </div>
-                       </div>
-                     )}
-                   </div>
-                 )}
+                        {/* More than 6 Months */}
+                        <div className="bg-gray-800 p-3 rounded-md">
+                          <h4 className="text-xs font-medium text-green-400 mb-2">More than 6 Months</h4>
+                          <div className="space-y-2 max-h-60 overflow-y-auto">
+                            {companyTagsData[question.titleSlug]?.more_than_six_months?.length > 0 ? (
+                              companyTagsData[question.titleSlug].more_than_six_months.map((tag, idx) => (
+                                <div key={tag.slug || `more-than-six-${idx}`} className="flex justify-between items-center text-xs">
+                                  <span className="text-gray-300">{tag.name}</span>
+                                  <span className="text-gray-400">{tag.timesEncountered} times</span>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500 text-xs">No data available</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Pagination at bottom - Removed as it's now at the top */}
+      {!isLoading && selectedCompanies.length > 0 && questions.length === 0 && !error && renderNoQuestionsFound()}
 
-      {/* No Questions State */}
-      {!isLoading && selectedCompany && questions.length === 0 && !error && renderNoQuestionsFound()}
-
-      {/* Initial State */}
-      {!isLoading && !selectedCompany && !error && (
+      {!isLoading && selectedCompanies.length === 0 && !error && (
         <div className="text-center py-20">
           <p className="text-gray-400 text-xl">
             Search for a company to see their interview questions
