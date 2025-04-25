@@ -225,13 +225,10 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
   useEffect(() => {
     if (isRateLimited) return;
 
-    // Don't apply filters on initial render or if only frequency has changed
+    // Don't apply filters on initial render
     if (
-      (difficulty === currentFilters.difficulty &&
-        matchType === currentFilters.match) ||
-      (difficulty === currentFilters.difficulty &&
-        matchType === currentFilters.match &&
-        frequency === currentFilters.minFrequency)
+      difficulty === currentFilters.difficulty &&
+      matchType === currentFilters.match
     ) {
       return;
     }
@@ -306,9 +303,8 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       resetPage?: boolean;
     } = { resetPage: true }; // Always reset page on applying filters
 
-    if (difficulty !== "all") {
-      filters.difficulty = difficulty;
-    }
+    // Always include difficulty in filters, even when it's 'all'
+    filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
 
@@ -369,9 +365,8 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       resetPage?: boolean;
     } = { resetPage: true };
 
-    if (difficulty !== "all") {
-      filters.difficulty = difficulty;
-    }
+    // Always include difficulty in filters, even when it's 'all'
+    filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
     filters.selectedCompanies = newSelectedCompanies;
@@ -410,9 +405,8 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       resetPage?: boolean;
     } = { resetPage: true };
 
-    if (difficulty !== "all") {
-      filters.difficulty = difficulty;
-    }
+    // Always include difficulty in filters, even when it's 'all'
+    filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
 
@@ -590,22 +584,26 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Difficulty
           </label>
-          {/* Container for difficulty buttons */}
+          {/* Container for difficulty buttons in a column layout */}
           <div className="flex flex-col space-y-2">
+            {/* 'All' button on top with full width */}
             <motion.button
               onClick={() => !disabled && setDifficulty("all")}
               disabled={disabled}
-              // Make 'All' button full width within its container
-              className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-all ${getDifficultyColor(
+              className={`w-[95%] mx-auto px-3 py-2.5 rounded-md text-sm font-medium transition-all ${getDifficultyColor(
                 "all"
-              )} ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
+              )} ${
+                difficulty === "all"
+                  ? "transform scale-105 shadow-md"
+                  : "opacity-80 hover:opacity-100"
+              } ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               All
             </motion.button>
 
-            {/* Difficulty buttons in a row below 'All' */}
+            {/* Individual difficulty buttons in a row */}
             <div className="flex space-x-2">
               {["easy", "medium", "hard"].map((diff) => (
                 <button
@@ -628,7 +626,6 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
             </div>
           </div>
         </div>
-
         {/* Frequency */}
         <div className="mt-6 md:mt-0">
           <label className="block text-sm font-medium text-gray-300 mb-2">

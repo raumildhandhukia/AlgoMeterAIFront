@@ -114,13 +114,8 @@ export const CompanyProvider: React.FC<{children: ReactNode}> = ({ children }) =
     page: number = currentPage,
     filters: FilterOptions = currentFilters
   ) => {
-    if (selectedCompanies.length === 0) {
-      setQuestions([]);
-      setPagination(null);
-      setError(null);
-      setIsLoading(false);
-      return;
-    }
+    // If no companies are selected, we'll fetch all companies data
+    // by not passing the slug parameter
 
     setIsLoading(true);
     setError(null);
@@ -138,6 +133,8 @@ export const CompanyProvider: React.FC<{children: ReactNode}> = ({ children }) =
         apiFilters.difficulty = filters.difficulty;
       }
       
+      // Pass the selectedCompanies array to the API, which will handle empty array case
+      // When selectedCompanies is empty, the API will fetch all companies data
       const response = await fetchCompanyQuestions(selectedCompanies, page, 100, apiFilters);
       
       if (response.statusCode === 429 || response.isRateLimited) {

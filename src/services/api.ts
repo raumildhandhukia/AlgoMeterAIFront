@@ -45,7 +45,8 @@ export const fetchCompanyQuestions = async (
       limit: limit.toString(),
     });
 
-    // Add company slugs as a single comma-separated parameter
+    // Add company slugs as a single comma-separated parameter only if companies are selected
+    // When no companies are selected, we don't pass the slug parameter to fetch all companies data
     if (companySlugs.length > 0) {
       queryParams.append('slug', companySlugs.join(','));
     }
