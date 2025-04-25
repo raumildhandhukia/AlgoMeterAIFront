@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Difficulty, MatchType } from "../types";
 
 // Time period options for filtering
-export type TimePeriod = "all-time" | "thirty-days" | "three-months" | "six-months" | "more-than-six-months";
+export type TimePeriod = "all-time" | "thirty-days" | "three-months" | "six-months";
 
 interface Company {
   name: string;
