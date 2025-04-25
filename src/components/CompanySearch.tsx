@@ -58,6 +58,7 @@ interface FilterOptions {
   minFrequency?: number;
   difficulty?: "easy" | "medium" | "hard" | "all";
   topics?: string[];
+  timePeriod?: "all-time" | "thirty-days" | "three-months" | "six-months" | "more-than-six-months";
 }
 
 interface CompanyQuestionsResponse {
@@ -86,6 +87,7 @@ const CompanySearch: React.FC = () => {
     difficulty: "all",
     minFrequency: 0,
     match: "any",
+    timePeriod: "all-time",
   });
 
   // Rate limiting state
@@ -158,6 +160,12 @@ const CompanySearch: React.FC = () => {
       if (apiFilters.difficulty === "all") {
         delete apiFilters.difficulty;
       }
+      
+      // Add timePeriod as favSlug if it exists
+      if (apiFilters.timePeriod && apiFilters.timePeriod !== "all-time") {
+        apiFilters.favSlug = apiFilters.timePeriod;
+      }
+      delete apiFilters.timePeriod; // Remove timePeriod as it's not a direct API parameter
 
       const response = await fetchCompanyQuestions(
         companySlugs,
@@ -264,6 +272,9 @@ const CompanySearch: React.FC = () => {
     }
     if (filters.topics) {
       newFilters.topics = filters.topics;
+    }
+    if (filters.timePeriod) {
+      newFilters.timePeriod = filters.timePeriod;
     }
 
     // Update current filters in state

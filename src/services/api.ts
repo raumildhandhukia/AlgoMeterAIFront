@@ -52,7 +52,7 @@ export const fetchCompanyQuestions = async (
     }
 
     // Add optional parameters
-    if (options.match) queryParams.append('match', options.match);
+    // if (options.match) queryParams.append('match', options.match);
     if (options.minFrequency !== undefined) queryParams.append('minFrequency', options.minFrequency.toString());
     if (options.difficulty) queryParams.append('difficulty', options.difficulty);
     if (options.topics && options.topics.length > 0) queryParams.append('topics', options.topics.join(','));

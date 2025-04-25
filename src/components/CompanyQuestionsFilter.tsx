@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Difficulty, MatchType } from "../types";
 
+// Time period options for filtering
+export type TimePeriod = "all-time" | "thirty-days" | "three-months" | "six-months" | "more-than-six-months";
+
 interface Company {
   name: string;
   slug: string;
@@ -18,6 +21,7 @@ interface FilterOptions {
   minFrequency?: number;
   difficulty?: Difficulty | "all";
   topics?: string[];
+  timePeriod?: TimePeriod;
 }
 
 interface CompanyQuestionsFilterProps {
@@ -30,6 +34,7 @@ interface CompanyQuestionsFilterProps {
     difficulty?: Difficulty | "all";
     topics?: string[];
     selectedCompanies?: string[];
+    timePeriod?: TimePeriod;
     resetPage?: boolean;
   }) => void;
   disabled?: boolean;
@@ -129,6 +134,9 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
   const [matchType, setMatchType] = useState<MatchType>(
     currentFilters.match || "any"
   );
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(
+    currentFilters.timePeriod || "all-time"
+  );
 
   // State for selected company options in the format react-select expects
   const [selectedCompanyOptions, setSelectedCompanyOptions] = useState<
@@ -216,26 +224,30 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
     if (currentFilters.topics) {
       setSelectedTopics(currentFilters.topics);
     }
+    if (currentFilters.timePeriod) {
+      setTimePeriod(currentFilters.timePeriod);
+    }
   }, [currentFilters]);
 
   // Debounce timer reference
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Apply filters automatically when difficulty or match type changes (immediately)
+  // Apply filters automatically when difficulty, match type, or time period changes (immediately)
   useEffect(() => {
     if (isRateLimited) return;
 
     // Don't apply filters on initial render
     if (
       difficulty === currentFilters.difficulty &&
-      matchType === currentFilters.match
+      matchType === currentFilters.match &&
+      timePeriod === currentFilters.timePeriod
     ) {
       return;
     }
 
     applyFilters();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [difficulty, matchType]);
+  }, [difficulty, matchType, timePeriod]);
 
   // Apply filters with debounce when frequency changes
   useEffect(() => {
@@ -300,6 +312,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       difficulty?: Difficulty | "all";
       topics?: string[];
       selectedCompanies?: string[];
+      timePeriod?: TimePeriod;
       resetPage?: boolean;
     } = { resetPage: true }; // Always reset page on applying filters
 
@@ -307,6 +320,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
     filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
+    filters.timePeriod = timePeriod;
 
     // Use the selectedCompanies prop to maintain company selection
     filters.selectedCompanies = selectedCompanies;
@@ -328,6 +342,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
     setFrequency(0);
     setMatchType("any");
     setSelectedTopics([]);
+    setTimePeriod("all-time");
     setSelectedCompanyOptions([]); // Clear selected companies in the dropdown
 
     // Apply the reset filters
@@ -337,6 +352,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       match: "any",
       topics: [],
       selectedCompanies: [],
+      timePeriod: "all-time",
       resetPage: true,
     });
   };
@@ -362,6 +378,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       difficulty?: Difficulty | "all";
       topics?: string[];
       selectedCompanies?: string[];
+      timePeriod?: TimePeriod;
       resetPage?: boolean;
     } = { resetPage: true };
 
@@ -369,6 +386,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
     filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
+    filters.timePeriod = timePeriod;
     filters.selectedCompanies = newSelectedCompanies;
 
     // Only include topics if there are selected topics
@@ -402,6 +420,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
       difficulty?: Difficulty | "all";
       topics?: string[];
       selectedCompanies?: string[];
+      timePeriod?: TimePeriod;
       resetPage?: boolean;
     } = { resetPage: true };
 
@@ -409,6 +428,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
     filters.difficulty = difficulty;
     filters.minFrequency = frequency;
     filters.match = matchType;
+    filters.timePeriod = timePeriod;
 
     // Always include topics array (empty or with values)
     filters.topics = newSelectedTopics;
@@ -574,6 +594,42 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
               No topics found
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Time Period Filter */}
+      <div className="mt-5 w-full">
+        <div className="mb-2">
+          <label className="block text-sm font-medium text-gray-300">Time Period</label>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 w-full">
+          {[
+            { id: "all-time", label: "All Time" },
+            { id: "thirty-days", label: "30 Days" },
+            { id: "three-months", label: "3 Months" },
+            { id: "six-months", label: "6 Months" },
+            { id: "more-than-six-months", label: "More than 6 Months" }
+          ].map((period) => (
+            <motion.button
+              key={period.id}
+              onClick={() => !disabled && setTimePeriod(period.id as TimePeriod)}
+              disabled={disabled}
+              className={`
+                w-full px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200
+                ${
+                  timePeriod === period.id
+                    ? "bg-indigo-600 text-white shadow-md ring-1 ring-indigo-300"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }
+                ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+              `}
+              whileHover={!disabled ? { scale: 1.02 } : undefined}
+              whileTap={!disabled ? { scale: 0.98 } : undefined}
+            >
+              {period.label}
+            </motion.button>
+          ))}
         </div>
       </div>
 
