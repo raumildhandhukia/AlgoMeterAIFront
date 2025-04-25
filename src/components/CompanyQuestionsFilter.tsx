@@ -609,7 +609,7 @@ const CompanyQuestionsFilter: React.FC<CompanyQuestionsFilterProps> = ({
             { id: "thirty-days", label: "30 Days" },
             { id: "three-months", label: "3 Months" },
             { id: "six-months", label: "6 Months" },
-            { id: "more-than-six-months", label: "More than 6 Months" }
+            // { id: "more-than-six-months", label: "More than 6 Months" }
           ].map((period) => (
             <motion.button
               key={period.id}
