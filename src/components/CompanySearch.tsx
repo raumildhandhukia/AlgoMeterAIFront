@@ -58,7 +58,7 @@ interface FilterOptions {
   minFrequency?: number;
   difficulty?: "easy" | "medium" | "hard" | "all";
   topics?: string[];
-  timePeriod?: "all-time" | "thirty-days" | "three-months" | "six-months" | "more-than-six-months";
+  timePeriod?: "all-time" | "thirty-days" | "three-months" | "six-months";
 }
 
 interface CompanyQuestionsResponse {
@@ -687,7 +687,8 @@ const CompanySearch: React.FC = () => {
                       )}
                     </span>
                   </button>
-                  <button
+                  {/* Times Asked Button */}
+                  {/* <button
                     onClick={() =>
                       handleGetDetailedFrequency(question.titleSlug)
                     }
@@ -708,7 +709,7 @@ const CompanySearch: React.FC = () => {
                         )}
                       </span>
                     )}
-                  </button>
+                  </button> */}
 
                   <div className="flex flex-wrap gap-1 ml-auto">
                     {question.topicTags.map((tag) => (
